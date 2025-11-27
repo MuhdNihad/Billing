@@ -320,9 +320,11 @@ class BillingAPITester:
 
         product_id = self.created_ids['products'][0]
         
-        # Test retail sale
+        # Test retail sale with customer details
         retail_sale_data = {
             "sale_type": "retail",
+            "customer_name": "John Doe",
+            "customer_phone": "9876543210",
             "items": [
                 {
                     "product_id": product_id,
