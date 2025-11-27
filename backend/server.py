@@ -539,11 +539,11 @@ async def get_daily_report(date: str):
 async def get_monthly_report(year: int, month: int):
     """Get report for specific month"""
     try:
-        start = datetime(year, month, 1, 0, 0, 0)
+        start = datetime(year, month, 1, 0, 0, 0, tzinfo=timezone.utc)
         if month == 12:
-            end = datetime(year + 1, 1, 1, 0, 0, 0)
+            end = datetime(year + 1, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         else:
-            end = datetime(year, month + 1, 1, 0, 0, 0)
+            end = datetime(year, month + 1, 1, 0, 0, 0, tzinfo=timezone.utc)
     except:
         raise HTTPException(status_code=400, detail="Invalid year or month")
     
