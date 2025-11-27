@@ -171,6 +171,8 @@ const Wholesale = () => {
 
     const saleData = {
       sale_type: "wholesale",
+      customer_name: customerName || null,
+      customer_phone: customerPhone || null,
       items: cart,
       discount_type: discountType,
       discount_value: discountValue,
@@ -180,12 +182,19 @@ const Wholesale = () => {
     };
 
     try {
-      await axios.post(`${API}/sales`, saleData);
+      const response = await axios.post(`${API}/sales`, saleData);
       toast.success("Sale completed successfully");
+      
+      // Set completed sale for printing
+      setCompletedSale(response.data);
+      
+      // Reset form
       setCart([]);
       setDiscountValue(0);
       setCashReceived(0);
       setGpayReturn(0);
+      setCustomerName("");
+      setCustomerPhone("");
       loadData();
     } catch (error) {
       toast.error("Failed to complete sale");
