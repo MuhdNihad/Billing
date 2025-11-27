@@ -404,43 +404,38 @@ const Wholesale = () => {
                   </RadioGroup>
                 </div>
 
-                {paymentMethod === "cash" && (
-                  <div>
-                    <Label>Cash Received (₹)</Label>
-                    <Input
-                      data-testid="cash-received-input"
-                      type="number"
-                      min="0"
-                      value={cashReceived}
-                      onChange={(e) => setCashReceived(parseFloat(e.target.value) || 0)}
-                    />
-                    <p className="text-sm text-gray-600 mt-1" data-testid="change-amount">
-                      Change: ₹{calculateChange().toFixed(2)}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <Label>GPay Return Amount (₹)</Label>
-                <Input
-                  data-testid="gpay-return-input"
-                  type="number"
-                  min="0"
-                  value={gpayReturn}
-                  onChange={(e) => setGpayReturn(parseFloat(e.target.value) || 0)}
-                  placeholder="If returning money via GPay"
-                />
-                <p className="text-xs text-gray-500 mt-1">Enter amount if you received cash but returning change via GPay</p>
+                <div>
+                  <Label>Print Type</Label>
+                  <RadioGroup value={printType} onValueChange={setPrintType}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="thermal" id="thermal" data-testid="print-type-thermal" />
+                      <Label htmlFor="thermal">Thermal (80mm)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="a4" id="a4" data-testid="print-type-a4" />
+                      <Label htmlFor="a4">A4 Paper</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
               </div>
 
               <Button data-testid="checkout-btn" onClick={handleCheckout} className="w-full" size="lg">
-                Complete Sale - ₹{calculateTotal().toFixed(2)}
+                <Printer className="w-4 h-4 mr-2" />
+                Complete Sale & Print - ₹{calculateTotal().toFixed(2)}
               </Button>
             </CardContent>
           </Card>
         )}
       </div>
+
+      {/* Hidden print component */}
+      {completedSale && (
+        <PrintBill 
+          sale={completedSale} 
+          printType={printType}
+          onPrintComplete={() => setCompletedSale(null)}
+        />
+      )}
     </div>
   );
 };
