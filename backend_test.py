@@ -342,7 +342,7 @@ class BillingAPITester:
         }
         
         success, response = self.run_test(
-            "Create Retail Sale",
+            "Create Retail Sale with Customer Details",
             "POST",
             "sales",
             200,
