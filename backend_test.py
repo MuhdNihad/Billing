@@ -463,8 +463,7 @@ class BillingAPITester:
         print("="*50)
         
         # Delete in reverse order of dependencies
-        for sale_id in self.created_ids['sales']:
-            self.run_test("Delete Sale", "DELETE", f"sales/{sale_id}", 200)
+        # Note: Sales don't have delete endpoint (business requirement)
             
         for expense_id in self.created_ids['expenses']:
             self.run_test("Delete Expense", "DELETE", f"expenses/{expense_id}", 200)
