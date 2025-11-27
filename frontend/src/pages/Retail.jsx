@@ -343,6 +343,27 @@ const Retail = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                  <Label>Customer Name (Optional)</Label>
+                  <Input
+                    data-testid="customer-name-input"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Enter customer name"
+                  />
+                </div>
+                <div>
+                  <Label>Phone Number (Optional)</Label>
+                  <Input
+                    data-testid="customer-phone-input"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                   <Label>Discount Type</Label>
                   <RadioGroup value={discountType} onValueChange={setDiscountType}>
                     <div className="flex items-center space-x-2">
