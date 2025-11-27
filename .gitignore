@@ -80,4 +80,3 @@ agenthub/agents/youtube/db
 android-sdk/ -e 
 # Environment files
 *.env
-*.env.*

@@ -4,7 +4,7 @@ from datetime import datetime, date
 import json
 
 class BillingAPITester:
-    def __init__(self, base_url="https://stock-manager-401.preview.emergentagent.com/api"):
+    def __init__(self, base_url="http://127.0.0.1:8000/api"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
@@ -23,7 +23,7 @@ class BillingAPITester:
         headers = {'Content-Type': 'application/json'}
 
         self.tests_run += 1
-        print(f"\n🔍 Testing {name}...")
+        print(f"\nTesting {name}...")
         
         try:
             if method == 'GET':
@@ -38,19 +38,19 @@ class BillingAPITester:
             success = response.status_code == expected_status
             if success:
                 self.tests_passed += 1
-                print(f"✅ Passed - Status: {response.status_code}")
+                print(f"Passed - Status: {response.status_code}")
                 try:
                     return True, response.json() if response.text else {}
                 except:
                     return True, {}
             else:
-                print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
+                print(f"Failed - Expected {expected_status}, got {response.status_code}")
                 if response.text:
                     print(f"   Response: {response.text[:200]}")
                 return False, {}
 
         except Exception as e:
-            print(f"❌ Failed - Error: {str(e)}")
+            print(f"Failed - Error: {str(e)}")
             return False, {}
 
     def test_categories(self):
@@ -184,7 +184,7 @@ class BillingAPITester:
         
         # Need products first
         if not self.created_ids['products']:
-            print("❌ No products available for set testing")
+            print("No products available for set testing")
             return False
 
         product_id = self.created_ids['products'][0]
@@ -272,7 +272,7 @@ class BillingAPITester:
         
         # Need expense category first
         if not self.created_ids['expense_categories']:
-            print("❌ No expense categories available for expense testing")
+            print("No expense categories available for expense testing")
             return False
 
         exp_cat_id = self.created_ids['expense_categories'][0]
@@ -315,7 +315,7 @@ class BillingAPITester:
         
         # Need products first
         if not self.created_ids['products']:
-            print("❌ No products available for sales testing")
+            print("No products available for sales testing")
             return False
 
         product_id = self.created_ids['products'][0]
@@ -481,7 +481,7 @@ class BillingAPITester:
             self.run_test("Delete Category", "DELETE", f"categories/{category_id}", 200)
 
 def main():
-    print("🚀 Starting Billing Application API Tests")
+    print("Starting Billing Application API Tests")
     print("="*60)
     
     tester = BillingAPITester()
@@ -501,7 +501,7 @@ def main():
     for test in tests:
         if not test():
             all_passed = False
-            print(f"\n❌ Test suite failed, stopping execution")
+            print(f"\nTest suite failed, stopping execution")
             break
     
     # Cleanup
@@ -509,16 +509,16 @@ def main():
     
     # Print results
     print(f"\n" + "="*60)
-    print(f"📊 FINAL RESULTS")
+    print(f"FINAL RESULTS")
     print(f"="*60)
     print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     if all_passed and tester.tests_passed == tester.tests_run:
-        print("🎉 All tests passed!")
+        print("All tests passed!")
         return 0
     else:
-        print("❌ Some tests failed!")
+        print("Some tests failed!")
         return 1
 
 if __name__ == "__main__":
