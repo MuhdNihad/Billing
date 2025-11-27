@@ -458,6 +458,9 @@ async def get_daily_report(date: str):
     """Get report for specific date (YYYY-MM-DD)"""
     try:
         target_date = datetime.fromisoformat(date)
+        # Make timezone-aware if needed
+        if target_date.tzinfo is None:
+            target_date = target_date.replace(tzinfo=timezone.utc)
         start = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
         end = target_date.replace(hour=23, minute=59, second=59, microsecond=999999)
     except:
