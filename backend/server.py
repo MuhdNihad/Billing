@@ -128,6 +128,8 @@ class Sale(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     sale_type: Literal["retail", "wholesale"]
+    customer_name: Optional[str] = None
+    customer_phone: Optional[str] = None
     items: List[SaleItem]
     subtotal: float
     discount_type: Literal["percentage", "amount"]
@@ -142,6 +144,8 @@ class Sale(BaseModel):
 
 class SaleCreate(BaseModel):
     sale_type: Literal["retail", "wholesale"]
+    customer_name: Optional[str] = None
+    customer_phone: Optional[str] = None
     items: List[SaleItem]
     discount_type: Literal["percentage", "amount"]
     discount_value: float
