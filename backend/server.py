@@ -586,6 +586,9 @@ async def get_monthly_report(year: int, month: int):
             exp_date = datetime.fromisoformat(exp['date'])
         else:
             exp_date = exp['date']
+        # Ensure timezone consistency
+        if exp_date.tzinfo is None:
+            exp_date = exp_date.replace(tzinfo=timezone.utc)
         if start <= exp_date < end:
             filtered_expenses.append(exp)
     
