@@ -372,7 +372,7 @@ class BillingAPITester:
         }
         
         success, response = self.run_test(
-            "Create Wholesale Sale",
+            "Create Wholesale Sale without Customer Details",
             "POST",
             "sales",
             200,
