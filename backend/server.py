@@ -474,6 +474,9 @@ async def get_daily_report(date: str):
             sale_date = datetime.fromisoformat(sale['date'])
         else:
             sale_date = sale['date']
+        # Ensure timezone consistency
+        if sale_date.tzinfo is None:
+            sale_date = sale_date.replace(tzinfo=timezone.utc)
         if start <= sale_date <= end:
             filtered_sales.append(sale)
     
