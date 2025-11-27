@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2, Package } from "lucide-react";
+import { Plus, Trash2, Package, Printer } from "lucide-react";
 import { API, axios, toast } from "../App";
+import PrintBill from "../components/PrintBill";
 
 const Wholesale = () => {
   const [products, setProducts] = useState([]);
