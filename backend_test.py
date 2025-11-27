@@ -353,7 +353,7 @@ class BillingAPITester:
         else:
             return False
 
-        # Test wholesale sale
+        # Test wholesale sale without customer details (optional fields)
         wholesale_sale_data = {
             "sale_type": "wholesale",
             "items": [
