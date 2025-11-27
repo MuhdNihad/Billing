@@ -420,12 +420,22 @@ const Retail = () => {
               </div>
 
               <Button data-testid="checkout-btn" onClick={handleCheckout} className="w-full" size="lg">
-                Complete Sale - ₹{calculateTotal().toFixed(2)}
+                <Printer className="w-4 h-4 mr-2" />
+                Complete Sale & Print - ₹{calculateTotal().toFixed(2)}
               </Button>
             </CardContent>
           </Card>
         )}
       </div>
+
+      {/* Hidden print component */}
+      {completedSale && (
+        <PrintBill 
+          sale={completedSale} 
+          printType={printType}
+          onPrintComplete={() => setCompletedSale(null)}
+        />
+      )}
     </div>
   );
 };
