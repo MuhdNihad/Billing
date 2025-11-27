@@ -23,6 +23,10 @@ const Retail = () => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [cashReceived, setCashReceived] = useState(0);
   const [gpayReturn, setGpayReturn] = useState(0);
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [printType, setPrintType] = useState("a4");
+  const [completedSale, setCompletedSale] = useState(null);
 
   useEffect(() => {
     loadData();
