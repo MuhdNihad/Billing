@@ -270,6 +270,41 @@ const Inventory = () => {
           <p className="text-gray-600 mt-2">Manage your categories, products, and sets</p>
         </div>
 
+        {inventoryValue && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Total Cost Value</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-blue-600">
+                  ₹{inventoryValue.total_cost_value.toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Total Retail Value</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">
+                  ₹{inventoryValue.total_retail_value.toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Total Wholesale Value</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-purple-600">
+                  ₹{inventoryValue.total_wholesale_value.toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         <Tabs defaultValue="categories" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="categories" data-testid="tab-categories">Categories</TabsTrigger>
