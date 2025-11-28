@@ -745,14 +745,26 @@ const Inventory = () => {
                       <CardHeader>
                         <div className="flex justify-between items-center">
                           <CardTitle className="text-lg">{set.name}</CardTitle>
-                          <Button
-                            data-testid={`delete-set-${set.id}`}
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteSet(set.id)}
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
+                          <div className="space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setEditingSet(set);
+                                setEditSetDialog(true);
+                              }}
+                            >
+                              <Edit className="w-4 h-4 text-blue-500" />
+                            </Button>
+                            <Button
+                              data-testid={`delete-set-${set.id}`}
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteSet(set.id)}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent>
