@@ -246,9 +246,13 @@ const Report = () => {
                             </TableHeader>
                             <TableBody>
                               {dailyReport.sales_list.map((sale, idx) => (
-                                <TableRow key={idx}>
+                                <TableRow 
+                                  key={idx} 
+                                  className="cursor-pointer hover:bg-gray-50"
+                                  onClick={() => setSelectedSale(sale)}
+                                >
                                   <TableCell className="capitalize">{sale.sale_type}</TableCell>
-                                  <TableCell>{sale.items.length}</TableCell>
+                                  <TableCell className="text-blue-600 hover:underline">{sale.items.length} items</TableCell>
                                   <TableCell className="capitalize">{sale.payment_method}</TableCell>
                                   <TableCell>₹{sale.discount_amount.toFixed(2)}</TableCell>
                                   <TableCell className="text-right font-medium">₹{sale.total.toFixed(2)}</TableCell>
