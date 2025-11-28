@@ -473,7 +473,7 @@ const Report = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {allSales.map((sale) => (
+                      {getFilteredSales().map((sale) => (
                         <TableRow key={sale.id} className="cursor-pointer hover:bg-gray-50">
                           <TableCell 
                             className="font-medium text-blue-600"
