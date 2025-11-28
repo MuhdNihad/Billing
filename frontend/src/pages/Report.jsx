@@ -834,10 +834,28 @@ const Report = () => {
                 </div>
 
                 {returnItems.length > 0 && (
-                  <div className="bg-gray-50 p-3 rounded">
-                    <p className="font-semibold">
-                      Total Refund: ₹{returnItems.reduce((sum, item) => sum + item.total, 0).toFixed(2)}
+                  <div className="bg-blue-50 p-3 rounded space-y-1">
+                    <p className="text-sm">
+                      <span className="font-medium">Items Total:</span> ₹{returnItems.reduce((sum, item) => sum + item.total, 0).toFixed(2)}
                     </p>
+                    {selectedSale.payment_type === "credit" && (
+                      <>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Customer Paid:</span> {((selectedSale.amount_paid || 0) / selectedSale.total * 100).toFixed(0)}% of sale
+                        </p>
+                        <p className="text-sm font-semibold text-green-600">
+                          <span className="font-medium">Actual Refund:</span> ₹{(returnItems.reduce((sum, item) => sum + item.total, 0) * ((selectedSale.amount_paid || 0) / selectedSale.total)).toFixed(2)}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          (Only refunding the amount customer actually paid for these items)
+                        </p>
+                      </>
+                    )}
+                    {selectedSale.payment_type !== "credit" && (
+                      <p className="font-semibold text-green-600">
+                        Total Refund: ₹{returnItems.reduce((sum, item) => sum + item.total, 0).toFixed(2)}
+                      </p>
+                    )}
                   </div>
                 )}
 
