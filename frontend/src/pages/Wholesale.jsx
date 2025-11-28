@@ -457,6 +457,22 @@ const Wholesale = () => {
                 </div>
               </div>
 
+              {paymentType === "full" && paymentMethod === "cash" && (
+                <div>
+                  <Label>Cash Received (₹)</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={cashReceived}
+                    onChange={(e) => setCashReceived(parseFloat(e.target.value) || 0)}
+                    placeholder="Enter cash received"
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    Change: ₹{calculateChange().toFixed(2)}
+                  </p>
+                </div>
+              )}
+
               {paymentType === "credit" && (
                 <div>
                   <Label>Amount Paid (₹)</Label>
