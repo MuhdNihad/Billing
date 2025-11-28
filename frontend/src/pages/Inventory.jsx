@@ -510,6 +510,26 @@ const Inventory = () => {
                 </div>
               </CardHeader>
               <CardContent>
+                <div className="mb-4 space-y-2">
+                  <Input
+                    placeholder="Search products..."
+                    value={searchProduct}
+                    onChange={(e) => setSearchProduct(e.target.value)}
+                  />
+                  {selectedCategoryId && (
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray-600">Filtered by category</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedCategoryId("")}
+                        className="ml-2"
+                      >
+                        Clear Filter
+                      </Button>
+                    </div>
+                  )}
+                </div>
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
@@ -525,7 +545,7 @@ const Inventory = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {products.map((prod) => (
+                      {getFilteredProducts().map((prod) => (
                         <TableRow key={prod.id}>
                           <TableCell className="font-medium">{prod.name}</TableCell>
                           <TableCell>{prod.category_name}</TableCell>
