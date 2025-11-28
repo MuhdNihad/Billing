@@ -456,6 +456,451 @@ class BillingAPITester:
         
         return success
 
+    def test_balance_system(self):
+        """Test Cash/GPay Balance System"""
+        print("\n" + "="*50)
+        print("TESTING CASH/GPAY BALANCE SYSTEM")
+        print("="*50)
+        
+        # Test GET /api/balance - should return cash and gpay balances
+        success, response = self.run_test(
+            "Get Balance",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        # Check if balance has cash and gpay fields
+        if 'cash' not in response or 'gpay' not in response:
+            print("Failed - Balance response missing cash or gpay fields")
+            return False
+            
+        print(f"Current Balance - Cash: {response.get('cash', 0)}, GPay: {response.get('gpay', 0)}")
+        return True
+
+    def test_expense_with_payment_source(self):
+        """Test Expense with Payment Source"""
+        print("\n" + "="*50)
+        print("TESTING EXPENSE WITH PAYMENT SOURCE")
+        print("="*50)
+        
+        # First create expense category if not exists
+        if not self.created_ids['expense_categories']:
+            success, response = self.run_test(
+                "Create Expense Category for Payment Test",
+                "POST",
+                "expense-categories",
+                200,
+                data={"name": "Test Payment Category"}
+            )
+            if success and 'id' in response:
+                self.created_ids['expense_categories'].append(response['id'])
+            else:
+                return False
+        
+        exp_cat_id = self.created_ids['expense_categories'][0]
+        
+        # Get initial balance
+        success, initial_balance = self.run_test(
+            "Get Initial Balance",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        initial_cash = initial_balance.get('cash', 0)
+        initial_gpay = initial_balance.get('gpay', 0)
+        
+        # Create expense with cash payment
+        cash_expense_data = {
+            "category_id": exp_cat_id,
+            "amount": 100.0,
+            "description": "Test cash expense",
+            "payment_source": "cash"
+        }
+        
+        success, response = self.run_test(
+            "Create Expense with Cash Payment",
+            "POST",
+            "expenses",
+            200,
+            data=cash_expense_data
+        )
+        if success and 'id' in response:
+            self.created_ids['expenses'].append(response['id'])
+        else:
+            return False
+            
+        # Check if cash balance reduced
+        success, new_balance = self.run_test(
+            "Get Balance After Cash Expense",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_cash = initial_cash - 100.0
+        if abs(new_balance.get('cash', 0) - expected_cash) > 0.01:
+            print(f"Failed - Cash balance not reduced correctly. Expected: {expected_cash}, Got: {new_balance.get('cash', 0)}")
+            return False
+            
+        # Create expense with gpay payment
+        gpay_expense_data = {
+            "category_id": exp_cat_id,
+            "amount": 50.0,
+            "description": "Test gpay expense",
+            "payment_source": "gpay"
+        }
+        
+        success, response = self.run_test(
+            "Create Expense with GPay Payment",
+            "POST",
+            "expenses",
+            200,
+            data=gpay_expense_data
+        )
+        if success and 'id' in response:
+            self.created_ids['expenses'].append(response['id'])
+        else:
+            return False
+            
+        # Check if gpay balance reduced
+        success, final_balance = self.run_test(
+            "Get Balance After GPay Expense",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_gpay = initial_gpay - 50.0
+        if abs(final_balance.get('gpay', 0) - expected_gpay) > 0.01:
+            print(f"Failed - GPay balance not reduced correctly. Expected: {expected_gpay}, Got: {final_balance.get('gpay', 0)}")
+            return False
+            
+        print("✓ Cash and GPay payment sources working correctly")
+        return True
+
+    def test_money_transfers(self):
+        """Test Money Transfers"""
+        print("\n" + "="*50)
+        print("TESTING MONEY TRANSFERS")
+        print("="*50)
+        
+        # Get initial balance
+        success, initial_balance = self.run_test(
+            "Get Initial Balance for Transfer Test",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        initial_cash = initial_balance.get('cash', 0)
+        initial_gpay = initial_balance.get('gpay', 0)
+        
+        # Test cash to gpay transfer
+        transfer_amount = 200.0
+        cash_to_gpay_data = {
+            "transfer_type": "cash_to_gpay",
+            "amount": transfer_amount,
+            "description": "Test cash to gpay transfer"
+        }
+        
+        success, response = self.run_test(
+            "Create Cash to GPay Transfer",
+            "POST",
+            "money-transfers",
+            200,
+            data=cash_to_gpay_data
+        )
+        if not success:
+            return False
+            
+        # Check balance after cash to gpay transfer
+        success, balance_after_c2g = self.run_test(
+            "Get Balance After Cash to GPay Transfer",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_cash_after_c2g = initial_cash - transfer_amount
+        expected_gpay_after_c2g = initial_gpay + transfer_amount
+        
+        if (abs(balance_after_c2g.get('cash', 0) - expected_cash_after_c2g) > 0.01 or 
+            abs(balance_after_c2g.get('gpay', 0) - expected_gpay_after_c2g) > 0.01):
+            print(f"Failed - Cash to GPay transfer balance incorrect")
+            print(f"Expected Cash: {expected_cash_after_c2g}, Got: {balance_after_c2g.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_after_c2g}, Got: {balance_after_c2g.get('gpay', 0)}")
+            return False
+            
+        # Test gpay to cash transfer
+        gpay_to_cash_data = {
+            "transfer_type": "gpay_to_cash",
+            "amount": 100.0,
+            "description": "Test gpay to cash transfer"
+        }
+        
+        success, response = self.run_test(
+            "Create GPay to Cash Transfer",
+            "POST",
+            "money-transfers",
+            200,
+            data=gpay_to_cash_data
+        )
+        if not success:
+            return False
+            
+        # Test GET /api/money-transfers
+        success, transfers = self.run_test(
+            "Get All Money Transfers",
+            "GET",
+            "money-transfers",
+            200
+        )
+        if not success:
+            return False
+            
+        if len(transfers) < 2:
+            print("Failed - Expected at least 2 transfers in the list")
+            return False
+            
+        print("✓ Money transfers working correctly")
+        return True
+
+    def test_credit_sales(self):
+        """Test Credit Sales"""
+        print("\n" + "="*50)
+        print("TESTING CREDIT SALES")
+        print("="*50)
+        
+        # Need products first
+        if not self.created_ids['products']:
+            print("No products available for credit sales testing")
+            return False
+
+        product_id = self.created_ids['products'][0]
+        
+        # Create a credit sale with partial payment
+        total_amount = 1000.0
+        partial_payment = 600.0
+        
+        credit_sale_data = {
+            "sale_type": "retail",
+            "payment_type": "credit",
+            "customer_name": "Credit Customer",
+            "customer_phone": "9876543210",
+            "items": [
+                {
+                    "product_id": product_id,
+                    "name": "Test Product",
+                    "quantity": 1.0,
+                    "unit_price": total_amount,
+                    "total": total_amount
+                }
+            ],
+            "discount_type": "amount",
+            "discount_value": 0.0,
+            "payment_method": "cash",
+            "amount_paid": partial_payment
+        }
+        
+        success, response = self.run_test(
+            "Create Credit Sale",
+            "POST",
+            "sales",
+            200,
+            data=credit_sale_data
+        )
+        if not success:
+            return False
+            
+        # Check if balance_amount is calculated correctly
+        expected_balance = total_amount - partial_payment
+        if abs(response.get('balance_amount', 0) - expected_balance) > 0.01:
+            print(f"Failed - Credit sale balance incorrect. Expected: {expected_balance}, Got: {response.get('balance_amount', 0)}")
+            return False
+            
+        self.created_ids['sales'].append(response['id'])
+        
+        # Test GET /api/sales/credit
+        success, credit_sales = self.run_test(
+            "Get Credit Sales",
+            "GET",
+            "sales/credit",
+            200
+        )
+        if not success:
+            return False
+            
+        # Check if our credit sale is in the list
+        found_credit_sale = False
+        for sale in credit_sales:
+            if sale.get('id') == response['id'] and sale.get('balance_amount', 0) > 0:
+                found_credit_sale = True
+                break
+                
+        if not found_credit_sale:
+            print("Failed - Credit sale not found in credit sales list")
+            return False
+            
+        print("✓ Credit sales working correctly")
+        return True
+
+    def test_category_editing(self):
+        """Test Category Editing"""
+        print("\n" + "="*50)
+        print("TESTING CATEGORY EDITING")
+        print("="*50)
+        
+        # Create a category to edit
+        success, response = self.run_test(
+            "Create Category for Editing",
+            "POST",
+            "expense-categories",
+            200,
+            data={"name": "Original Category Name"}
+        )
+        if not success:
+            return False
+            
+        category_id = response['id']
+        self.created_ids['expense_categories'].append(category_id)
+        
+        # Test PUT /api/expense-categories/{id}
+        new_name = "Updated Category Name"
+        success, updated_response = self.run_test(
+            "Update Expense Category Name",
+            "PUT",
+            f"expense-categories/{category_id}",
+            200,
+            data={"name": new_name}
+        )
+        if not success:
+            return False
+            
+        # Check if name was updated
+        if updated_response.get('name') != new_name:
+            print(f"Failed - Category name not updated. Expected: {new_name}, Got: {updated_response.get('name')}")
+            return False
+            
+        print("✓ Category editing working correctly")
+        return True
+
+    def test_inventory_total_value(self):
+        """Test Inventory Total Value"""
+        print("\n" + "="*50)
+        print("TESTING INVENTORY TOTAL VALUE")
+        print("="*50)
+        
+        # Test GET /api/inventory/total-value
+        success, response = self.run_test(
+            "Get Inventory Total Value",
+            "GET",
+            "inventory/total-value",
+            200
+        )
+        if not success:
+            return False
+            
+        # Check if response has required fields
+        required_fields = ['total_cost_value', 'total_retail_value', 'total_wholesale_value', 'total_items']
+        for field in required_fields:
+            if field not in response:
+                print(f"Failed - Missing field in inventory total value response: {field}")
+                return False
+                
+        print(f"✓ Inventory Total Value - Cost: {response['total_cost_value']}, Retail: {response['total_retail_value']}, Wholesale: {response['total_wholesale_value']}, Items: {response['total_items']}")
+        return True
+
+    def test_returns_refunds(self):
+        """Test Returns/Refunds"""
+        print("\n" + "="*50)
+        print("TESTING RETURNS/REFUNDS")
+        print("="*50)
+        
+        # Need a sale first
+        if not self.created_ids['sales']:
+            print("No sales available for returns testing")
+            return False
+            
+        # Get product quantity before return
+        if not self.created_ids['products']:
+            print("No products available for returns testing")
+            return False
+            
+        product_id = self.created_ids['products'][0]
+        
+        # Get current product quantity
+        success, product_before = self.run_test(
+            "Get Product Before Return",
+            "GET",
+            f"products/{product_id}",
+            200
+        )
+        if not success:
+            return False
+            
+        quantity_before = product_before.get('quantity', 0)
+        
+        # Create a return
+        sale_id = self.created_ids['sales'][0]
+        return_data = {
+            "sale_id": sale_id,
+            "items": [
+                {
+                    "product_id": product_id,
+                    "name": "Test Product Return",
+                    "quantity": 1.0,
+                    "unit_price": 100.0,
+                    "total": 100.0
+                }
+            ],
+            "refund_method": "cash",
+            "reason": "Test return"
+        }
+        
+        success, response = self.run_test(
+            "Create Return",
+            "POST",
+            "returns",
+            200,
+            data=return_data
+        )
+        if not success:
+            return False
+            
+        # Check if stock was restored
+        success, product_after = self.run_test(
+            "Get Product After Return",
+            "GET",
+            f"products/{product_id}",
+            200
+        )
+        if not success:
+            return False
+            
+        quantity_after = product_after.get('quantity', 0)
+        expected_quantity = quantity_before + 1.0
+        
+        if abs(quantity_after - expected_quantity) > 0.01:
+            print(f"Failed - Stock not restored correctly. Expected: {expected_quantity}, Got: {quantity_after}")
+            return False
+            
+        print("✓ Returns/Refunds working correctly - stock restored")
+        return True
+
     def cleanup(self):
         """Clean up created test data"""
         print("\n" + "="*50)
