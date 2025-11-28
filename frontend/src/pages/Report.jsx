@@ -145,6 +145,51 @@ const Report = () => {
       // Add item
       setReturnItems([...returnItems, {
         product_id: item.product_id || null,
+
+
+  const handlePayCredit = async () => {
+    if (!paymentSale || paymentAmount <= 0) {
+      toast.error("Please enter a valid payment amount");
+      return;
+    }
+
+    if (paymentAmount > paymentSale.balance_amount) {
+      toast.error("Payment amount cannot exceed balance");
+      return;
+    }
+
+    try {
+      // Update the sale with new payment
+      const updatedAmountPaid = (paymentSale.amount_paid || 0) + paymentAmount;
+      const updatedBalance = paymentSale.balance_amount - paymentAmount;
+
+      await axios.put(`${API}/sales/${paymentSale.id}`, {
+        amount_paid: updatedAmountPaid,
+        balance_amount: updatedBalance
+      });
+
+      // Update balance (cash or gpay)
+      const balanceResponse = await axios.get(`${API}/balance`);
+      const currentBalance = balanceResponse.data;
+      
+      const balanceUpdate = {
+        cash: paymentMethod === "cash" ? currentBalance.cash + paymentAmount : currentBalance.cash,
+        gpay: paymentMethod === "gpay" ? currentBalance.gpay + paymentAmount : currentBalance.gpay
+      };
+
+      await axios.put(`${API}/balance`, balanceUpdate);
+
+      toast.success("Payment recorded successfully");
+      setPaymentDialog(false);
+      setPaymentAmount(0);
+      setPaymentSale(null);
+      loadCreditSales();
+      loadAllSales();
+    } catch (error) {
+      toast.error("Failed to record payment");
+    }
+  };
+
         set_id: item.set_id || null,
         name: item.name,
         quantity: item.quantity,
