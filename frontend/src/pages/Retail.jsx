@@ -429,6 +429,20 @@ const Retail = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                  <Label>Payment Type</Label>
+                  <RadioGroup value={paymentType} onValueChange={setPaymentType}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="full" id="full-payment" />
+                      <Label htmlFor="full-payment">Full Payment</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="credit" id="credit-payment" />
+                      <Label htmlFor="credit-payment">Credit/Partial</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div>
                   <Label>Payment Method</Label>
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="flex items-center space-x-2">
@@ -441,20 +455,36 @@ const Retail = () => {
                     </div>
                   </RadioGroup>
                 </div>
+              </div>
 
+              {paymentType === "credit" && (
                 <div>
-                  <Label>Print Type</Label>
-                  <RadioGroup value={printType} onValueChange={setPrintType}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="thermal" id="thermal" data-testid="print-type-thermal" />
-                      <Label htmlFor="thermal">Thermal (80mm)</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="a4" id="a4" data-testid="print-type-a4" />
-                      <Label htmlFor="a4">A4 Paper</Label>
-                    </div>
-                  </RadioGroup>
+                  <Label>Amount Paid (₹)</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={amountPaid}
+                    onChange={(e) => setAmountPaid(parseFloat(e.target.value) || 0)}
+                    placeholder="Enter amount paid"
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    Balance: ₹{(calculateTotal() - amountPaid).toFixed(2)}
+                  </p>
                 </div>
+              )}
+
+              <div>
+                <Label>Print Type</Label>
+                <RadioGroup value={printType} onValueChange={setPrintType}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="thermal" id="thermal" data-testid="print-type-thermal" />
+                    <Label htmlFor="thermal">Thermal (80mm)</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="a4" id="a4" data-testid="print-type-a4" />
+                    <Label htmlFor="a4">A4 Paper</Label>
+                  </div>
+                </RadioGroup>
               </div>
 
               <Button data-testid="checkout-btn" onClick={handleCheckout} className="w-full" size="lg">
