@@ -700,6 +700,92 @@ const Report = () => {
                     </>
                   )}
                 </div>
+
+                <div className="border-t pt-4">
+                  <Button 
+                    onClick={() => {
+                      setReturnDialog(true);
+                      setReturnItems([]);
+                    }}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    Process Return/Refund
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Return/Refund Dialog */}
+        {returnDialog && selectedSale && (
+          <Dialog open={returnDialog} onOpenChange={setReturnDialog}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Process Return for Invoice #{selectedSale.id.substring(0, 8).toUpperCase()}</DialogTitle>
+                <DialogDescription>Select items to return and specify refund method</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label className="mb-2 block">Select Items to Return:</Label>
+                  <div className="space-y-2">
+                    {selectedSale.items.map((item, idx) => (
+                      <div key={idx} className="flex items-center space-x-2 p-2 border rounded">
+                        <input
+                          type="checkbox"
+                          checked={returnItems.some(ri => ri.name === item.name)}
+                          onChange={() => handleToggleReturnItem(item)}
+                          className="w-4 h-4"
+                        />
+                        <div className="flex-1">
+                          <p className="font-medium">{item.name}</p>
+                          <p className="text-sm text-gray-600">
+                            Qty: {item.quantity} × ₹{item.unit_price.toFixed(2)} = ₹{item.total.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Refund Method</Label>
+                  <Select value={refundMethod} onValueChange={setRefundMethod}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cash">Cash</SelectItem>
+                      <SelectItem value="gpay">GPay</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Reason (Optional)</Label>
+                  <Input
+                    value={returnReason}
+                    onChange={(e) => setReturnReason(e.target.value)}
+                    placeholder="e.g., Defective product, Wrong item, etc."
+                  />
+                </div>
+
+                {returnItems.length > 0 && (
+                  <div className="bg-gray-50 p-3 rounded">
+                    <p className="font-semibold">
+                      Total Refund: ₹{returnItems.reduce((sum, item) => sum + item.total, 0).toFixed(2)}
+                    </p>
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handleProcessReturn} 
+                  className="w-full"
+                  disabled={returnItems.length === 0}
+                >
+                  Process Return & Refund
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
