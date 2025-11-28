@@ -262,19 +262,29 @@ const Retail = () => {
               </div>
 
               <div>
+                <Label>Search {itemType === "product" ? "Product" : "Set"}</Label>
+                <Input
+                  placeholder={`Type to search ${itemType}...`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="mb-2"
+                />
+              </div>
+
+              <div>
                 <Label>Select {itemType === "product" ? "Product" : "Set"}</Label>
                 <Select value={selectedItem} onValueChange={setSelectedItem}>
                   <SelectTrigger data-testid="item-select">
                     <SelectValue placeholder={`Choose ${itemType}`} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-64 overflow-auto">
                     {itemType === "product"
-                      ? products.map((prod) => (
+                      ? getFilteredItems().map((prod) => (
                           <SelectItem key={prod.id} value={prod.id}>
                             {prod.name} - ₹{prod.retail_price} (Stock: {prod.quantity})
                           </SelectItem>
                         ))
-                      : sets.map((set) => (
+                      : getFilteredItems().map((set) => (
                           <SelectItem key={set.id} value={set.id}>
                             {set.name}
                           </SelectItem>
