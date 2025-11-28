@@ -163,21 +163,9 @@ const Report = () => {
       const updatedAmountPaid = (paymentSale.amount_paid || 0) + paymentAmount;
       const updatedBalance = paymentSale.balance_amount - paymentAmount;
 
-      await axios.put(`${API}/sales/${paymentSale.id}`, {
-        amount_paid: updatedAmountPaid,
-        balance_amount: updatedBalance
-      });
-
-      // Update balance (cash or gpay)
-      const balanceResponse = await axios.get(`${API}/balance`);
-      const currentBalance = balanceResponse.data;
-      
-      const balanceUpdate = {
-        cash: paymentMethod === "cash" ? currentBalance.cash + paymentAmount : currentBalance.cash,
-        gpay: paymentMethod === "gpay" ? currentBalance.gpay + paymentAmount : currentBalance.gpay
-      };
-
-      await axios.put(`${API}/balance`, balanceUpdate);
+      await axios.put(
+        `${API}/sales/${paymentSale.id}?amount_paid=${updatedAmountPaid}&balance_amount=${updatedBalance}&payment_method=${paymentMethod}`
+      );
 
       toast.success("Payment recorded successfully");
       setPaymentDialog(false);
