@@ -720,6 +720,176 @@ const Inventory = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Edit Product Dialog */}
+      <Dialog open={editProductDialog} onOpenChange={setEditProductDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+            <DialogDescription>Update product details</DialogDescription>
+          </DialogHeader>
+          {editingProduct && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Product Name</Label>
+                  <Input
+                    value={editingProduct.name}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Category</Label>
+                  <Select
+                    value={editingProduct.category_id}
+                    onValueChange={(value) => setEditingProduct({ ...editingProduct, category_id: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label>Quantity</Label>
+                  <Input
+                    type="number"
+                    value={editingProduct.quantity}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, quantity: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div>
+                  <Label>Unit</Label>
+                  <Select
+                    value={editingProduct.unit}
+                    onValueChange={(value) => setEditingProduct({ ...editingProduct, unit: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pieces">Pieces</SelectItem>
+                      <SelectItem value="ml">Milliliters (ml)</SelectItem>
+                      <SelectItem value="meter">Meters</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Cost Price (₹)</Label>
+                  <Input
+                    type="number"
+                    value={editingProduct.cost_price}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, cost_price: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Retail Price (₹)</Label>
+                  <Input
+                    type="number"
+                    value={editingProduct.retail_price}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, retail_price: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div>
+                  <Label>Wholesale Price (₹)</Label>
+                  <Input
+                    type="number"
+                    value={editingProduct.wholesale_price}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, wholesale_price: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+              </div>
+              <Button onClick={handleUpdateProduct} className="w-full">
+                Update Product
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Restock Product Dialog */}
+      <Dialog open={restockDialog} onOpenChange={setRestockDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Restock Product</DialogTitle>
+            <DialogDescription>
+              {editingProduct && `Add stock for ${editingProduct.name}`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Quantity to Add</Label>
+              <Input
+                type="number"
+                min="0"
+                value={restockData.quantity}
+                onChange={(e) => setRestockData({ ...restockData, quantity: parseFloat(e.target.value) || 0 })}
+                placeholder="Enter quantity"
+              />
+            </div>
+            <div>
+              <Label>Cost Price (Optional)</Label>
+              <Input
+                type="number"
+                min="0"
+                value={restockData.cost_price || ""}
+                onChange={(e) => setRestockData({ ...restockData, cost_price: e.target.value ? parseFloat(e.target.value) : null })}
+                placeholder="Leave empty to use existing price"
+              />
+            </div>
+            <div>
+              <Label>Supplier Name (Optional)</Label>
+              <Input
+                value={restockData.supplier_name}
+                onChange={(e) => setRestockData({ ...restockData, supplier_name: e.target.value })}
+                placeholder="Enter supplier name"
+              />
+            </div>
+            {restockData.supplier_name && (
+              <>
+                <div>
+                  <Label>Amount Paid (₹)</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={restockData.paid_amount}
+                    onChange={(e) => setRestockData({ ...restockData, paid_amount: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div>
+                  <Label>Payment Source</Label>
+                  <Select
+                    value={restockData.payment_source}
+                    onValueChange={(value) => setRestockData({ ...restockData, payment_source: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cash">Cash</SelectItem>
+                      <SelectItem value="gpay">GPay</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+            <Button onClick={handleRestockProduct} className="w-full">
+              Restock Product
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
