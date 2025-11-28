@@ -554,7 +554,27 @@ const Inventory = () => {
                           <TableCell>₹{prod.cost_price}</TableCell>
                           <TableCell>₹{prod.retail_price}</TableCell>
                           <TableCell>₹{prod.wholesale_price}</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setEditingProduct(prod);
+                                setEditProductDialog(true);
+                              }}
+                            >
+                              <Edit className="w-4 h-4 text-blue-500" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setEditingProduct(prod);
+                                setRestockDialog(true);
+                              }}
+                            >
+                              <Plus className="w-4 h-4 text-green-500" />
+                            </Button>
                             <Button
                               data-testid={`delete-product-${prod.id}`}
                               variant="ghost"
