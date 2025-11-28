@@ -125,8 +125,9 @@ const PrintBill = ({ sale, printType = "a4", onPrintComplete }) => {
       `}</style>
 
       <div className="bill-header">
-        <div className="bill-title">BILLING APPLICATION</div>
-        <div>Invoice #{sale.id.substring(0, 8).toUpperCase()}</div>
+        <div className="bill-title">BISMI</div>
+        <div style={{ fontSize: isThermal ? '11px' : '13px', marginTop: '3px' }}>9895188762</div>
+        <div style={{ marginTop: '8px' }}>Invoice #{sale.id.substring(0, 8).toUpperCase()}</div>
         <div>{new Date(sale.date).toLocaleString()}</div>
         <div style={{ textTransform: 'uppercase', fontWeight: 'bold', marginTop: '5px' }}>
           {sale.sale_type} SALE
