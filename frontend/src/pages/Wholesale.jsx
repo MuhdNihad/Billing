@@ -164,8 +164,13 @@ const Wholesale = () => {
       return;
     }
 
-    if (paymentMethod === "cash" && cashReceived < calculateTotal() && gpayReturn === 0) {
+    if (paymentMethod === "cash" && gpayReturn === 0 && cashReceived < calculateTotal()) {
       toast.error("Insufficient cash received");
+      return;
+    }
+    
+    if (paymentMethod === "cash" && gpayReturn > 0 && (cashReceived + gpayReturn) < calculateTotal()) {
+      toast.error("Insufficient payment (cash + gpay return)");
       return;
     }
 
