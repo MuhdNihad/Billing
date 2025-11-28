@@ -381,7 +381,17 @@ const Inventory = () => {
                           {cat.name}
                         </TableCell>
                         <TableCell>{new Date(cat.created_at).toLocaleDateString()}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingCategory(cat);
+                              setEditCategoryDialog(true);
+                            }}
+                          >
+                            <Edit className="w-4 h-4 text-blue-500" />
+                          </Button>
                           <Button
                             data-testid={`delete-category-${cat.id}`}
                             variant="ghost"
