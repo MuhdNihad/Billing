@@ -367,8 +367,16 @@ const Inventory = () => {
                   </TableHeader>
                   <TableBody>
                     {getFilteredCategories().map((cat) => (
-                      <TableRow key={cat.id}>
-                        <TableCell className="font-medium">{cat.name}</TableCell>
+                      <TableRow key={cat.id} className="cursor-pointer hover:bg-gray-50">
+                        <TableCell 
+                          className="font-medium text-blue-600 hover:underline" 
+                          onClick={() => {
+                            setSelectedCategoryId(cat.id);
+                            document.querySelector('[value="products"]').click();
+                          }}
+                        >
+                          {cat.name}
+                        </TableCell>
                         <TableCell>{new Date(cat.created_at).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">
                           <Button
