@@ -857,7 +857,13 @@ async def create_return(input: ReturnCreate):
         raise HTTPException(status_code=404, detail="Sale not found")
     
     # Calculate refund amount
-    refund_amount = sum(item.total for item in input.items)
+    total_return_amount = sum(item.total for item in input.items)
+    refund_amount = total_return_amount
+    
+    # For credit sales, only refund proportionally to what was paid
+    if sale.get('payment_type') == 'credit' and sale.get('amount_paid', 0) > 0:
+        paid_percentage = sale['amount_paid'] / sale['total']
+        refund_amount = total_return_amount * paid_percentage
     
     return_dict = input.model_dump()
     return_dict['refund_amount'] = refund_amount
