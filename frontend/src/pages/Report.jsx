@@ -411,8 +411,6 @@ const Report = () => {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
-
 
           <TabsContent value="invoices">
             <Card>
