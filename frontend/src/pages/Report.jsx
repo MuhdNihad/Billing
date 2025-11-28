@@ -637,6 +637,7 @@ const Report = () => {
                       <TableHead>Total</TableHead>
                       <TableHead>Paid</TableHead>
                       <TableHead>Balance</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -654,6 +655,19 @@ const Report = () => {
                         <TableCell>₹{sale.total.toFixed(2)}</TableCell>
                         <TableCell className="text-green-600">₹{sale.amount_paid?.toFixed(2) || "0.00"}</TableCell>
                         <TableCell className="text-red-600 font-semibold">₹{sale.balance_amount?.toFixed(2) || "0.00"}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setPaymentSale(sale);
+                              setPaymentAmount(sale.balance_amount);
+                              setPaymentDialog(true);
+                            }}
+                            disabled={sale.balance_amount <= 0}
+                          >
+                            Pay Balance
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
