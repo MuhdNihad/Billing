@@ -679,8 +679,15 @@ const Inventory = () => {
                 </div>
               </CardHeader>
               <CardContent>
+                <div className="mb-4">
+                  <Input
+                    placeholder="Search sets..."
+                    value={searchSet}
+                    onChange={(e) => setSearchSet(e.target.value)}
+                  />
+                </div>
                 <div className="space-y-4">
-                  {sets.map((set) => (
+                  {getFilteredSets().map((set) => (
                     <Card key={set.id}>
                       <CardHeader>
                         <div className="flex justify-between items-center">
