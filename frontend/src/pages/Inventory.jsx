@@ -372,7 +372,8 @@ const Inventory = () => {
                           className="font-medium text-blue-600 hover:underline" 
                           onClick={() => {
                             setSelectedCategoryId(cat.id);
-                            document.querySelector('[value="products"]').click();
+                            const productsTab = document.querySelector('[data-testid="tab-products"]');
+                            if (productsTab) productsTab.click();
                           }}
                         >
                           {cat.name}
