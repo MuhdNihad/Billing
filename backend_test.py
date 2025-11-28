@@ -926,17 +926,29 @@ class BillingAPITester:
             self.run_test("Delete Category", "DELETE", f"categories/{category_id}", 200)
 
 def main():
-    print("Starting Billing Application API Tests")
+    print("Starting Comprehensive Billing Application API Tests")
     print("="*60)
     
     tester = BillingAPITester()
     
-    # Run all tests
+    # Run all tests - including the critical features from review request
     tests = [
+        # Basic CRUD tests (setup for other tests)
         tester.test_categories,
         tester.test_products,
-        tester.test_sets,
         tester.test_expense_categories,
+        
+        # Critical features from review request
+        tester.test_balance_system,
+        tester.test_expense_with_payment_source,
+        tester.test_money_transfers,
+        tester.test_credit_sales,
+        tester.test_category_editing,
+        tester.test_inventory_total_value,
+        tester.test_returns_refunds,
+        
+        # Additional tests
+        tester.test_sets,
         tester.test_expenses,
         tester.test_sales,
         tester.test_reports
