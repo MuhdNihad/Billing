@@ -45,7 +45,13 @@ const Report = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/reports/monthly?year=${monthlyYear}&month=${monthlyMonth}`);
-
+      setMonthlyReport(response.data);
+    } catch (error) {
+      toast.error("Failed to load monthly report");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadAllSales = async () => {
     try {
@@ -71,14 +77,6 @@ const Report = () => {
       setReturns(response.data);
     } catch (error) {
       toast.error("Failed to load returns");
-    }
-  };
-
-      setMonthlyReport(response.data);
-    } catch (error) {
-      toast.error("Failed to load monthly report");
-    } finally {
-      setLoading(false);
     }
   };
 
