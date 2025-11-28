@@ -369,12 +369,14 @@ const Inventory = () => {
                     {getFilteredCategories().map((cat) => (
                       <TableRow key={cat.id} className="cursor-pointer hover:bg-gray-50">
                         <TableCell 
-                          className="font-medium text-blue-600 hover:underline" 
+                          className="font-medium text-blue-600 hover:underline cursor-pointer" 
                           onClick={() => {
                             setSelectedCategoryId(cat.id);
+                            setSearchProduct(""); // Clear search when filtering by category
                             const productsTab = document.querySelector('[data-testid="tab-products"]');
                             if (productsTab) productsTab.click();
                           }}
+                          title="Click to view products in this category"
                         >
                           {cat.name}
                         </TableCell>
