@@ -17,11 +17,14 @@ const Wholesale = () => {
   const [cart, setCart] = useState([]);
   const [itemType, setItemType] = useState("product");
   const [selectedItem, setSelectedItem] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState(0);
+  const [paymentType, setPaymentType] = useState("full");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [cashReceived, setCashReceived] = useState(0);
+  const [amountPaid, setAmountPaid] = useState(0);
   const [gpayReturn, setGpayReturn] = useState(0);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
