@@ -106,7 +106,9 @@ const Report = () => {
     const targetDate = new Date(invoiceDate);
     return returns.filter(ret => {
       const retDate = new Date(ret.date);
-
+      return retDate.toDateString() === targetDate.toDateString();
+    });
+  };
 
   const handleProcessReturn = async () => {
     if (!selectedSale || returnItems.length === 0) {
