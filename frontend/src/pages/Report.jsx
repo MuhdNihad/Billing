@@ -101,6 +101,54 @@ const Report = () => {
     const targetDate = new Date(invoiceDate);
     return returns.filter(ret => {
       const retDate = new Date(ret.date);
+
+
+  const handleProcessReturn = async () => {
+    if (!selectedSale || returnItems.length === 0) {
+      toast.error("Please select items to return");
+      return;
+    }
+
+    const returnData = {
+      sale_id: selectedSale.id,
+      items: returnItems,
+      refund_method: refundMethod,
+      reason: returnReason || null,
+    };
+
+    try {
+      await axios.post(`${API}/returns`, returnData);
+      toast.success("Return processed successfully");
+      setReturnDialog(false);
+      setReturnItems([]);
+      setReturnReason("");
+      setSelectedSale(null);
+      loadAllSales();
+      loadReturns();
+    } catch (error) {
+      toast.error("Failed to process return");
+    }
+  };
+
+  const handleToggleReturnItem = (item) => {
+    const existingIndex = returnItems.findIndex(ri => ri.name === item.name);
+    
+    if (existingIndex >= 0) {
+      // Remove item
+      setReturnItems(returnItems.filter((_, idx) => idx !== existingIndex));
+    } else {
+      // Add item
+      setReturnItems([...returnItems, {
+        product_id: item.product_id || null,
+        set_id: item.set_id || null,
+        name: item.name,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total: item.total
+      }]);
+    }
+  };
+
       return retDate.toDateString() === targetDate.toDateString();
     });
   };
