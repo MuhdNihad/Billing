@@ -185,15 +185,6 @@ const Report = () => {
     }
   };
 
-        set_id: item.set_id || null,
-        name: item.name,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-        total: item.total
-      }]);
-    }
-  };
-
       return retDate.toDateString() === targetDate.toDateString();
     });
   };
