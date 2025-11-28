@@ -652,7 +652,8 @@ const Inventory = () => {
                             </Button>
                           </TableCell>
                         </TableRow>
-                      ))}
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
