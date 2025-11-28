@@ -15,6 +15,10 @@ const Report = () => {
   const [monthlyMonth, setMonthlyMonth] = useState(new Date().getMonth() + 1);
   const [dailyReport, setDailyReport] = useState(null);
   const [monthlyReport, setMonthlyReport] = useState(null);
+  const [allSales, setAllSales] = useState([]);
+  const [creditSales, setCreditSales] = useState([]);
+  const [returns, setReturns] = useState([]);
+  const [selectedSale, setSelectedSale] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
