@@ -73,6 +73,28 @@ const Report = () => {
   };
 
   const loadReturns = async () => {
+
+
+  const getFilteredSales = () => {
+    if (!invoiceDate) return allSales;
+    
+    const targetDate = new Date(invoiceDate);
+    return allSales.filter(sale => {
+      const saleDate = new Date(sale.date);
+      return saleDate.toDateString() === targetDate.toDateString();
+    });
+  };
+
+  const getFilteredReturns = () => {
+    if (!invoiceDate) return returns;
+    
+    const targetDate = new Date(invoiceDate);
+    return returns.filter(ret => {
+      const retDate = new Date(ret.date);
+      return retDate.toDateString() === targetDate.toDateString();
+    });
+  };
+
     try {
       const response = await axios.get(`${API}/returns`);
       setReturns(response.data);
