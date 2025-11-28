@@ -25,6 +25,10 @@ const Report = () => {
   const [returnItems, setReturnItems] = useState([]);
   const [refundMethod, setRefundMethod] = useState("cash");
   const [returnReason, setReturnReason] = useState("");
+  const [paymentDialog, setPaymentDialog] = useState(false);
+  const [paymentSale, setPaymentSale] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [invoiceDate, setInvoiceDate] = useState("");
   const [loading, setLoading] = useState(false);
 
