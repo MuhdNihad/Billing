@@ -407,6 +407,131 @@ const Report = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+
+          <TabsContent value="invoices">
+            <Card>
+              <CardHeader>
+                <CardTitle>Sales Invoices & Returns</CardTitle>
+                <CardDescription>View all sales invoices and process returns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold mb-2">All Sales</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Invoice #</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Customer</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Total</TableHead>
+                        <TableHead>Payment</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {allSales.map((sale) => (
+                        <TableRow key={sale.id} className="cursor-pointer hover:bg-gray-50">
+                          <TableCell 
+                            className="font-medium text-blue-600"
+                            onClick={() => setSelectedSale(sale)}
+                          >
+                            {sale.id.substring(0, 8).toUpperCase()}
+                          </TableCell>
+                          <TableCell>{new Date(sale.date).toLocaleDateString()}</TableCell>
+                          <TableCell>{sale.customer_name || "-"}</TableCell>
+                          <TableCell className="capitalize">{sale.sale_type}</TableCell>
+                          <TableCell>₹{sale.total.toFixed(2)}</TableCell>
+                          <TableCell className="capitalize">{sale.payment_method}</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedSale(sale)}
+                            >
+                              View Details
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {returns.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-2">Returns</h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Return ID</TableHead>
+                          <TableHead>Sale ID</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Refund Amount</TableHead>
+                          <TableHead>Method</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {returns.map((ret) => (
+                          <TableRow key={ret.id}>
+                            <TableCell>{ret.id.substring(0, 8).toUpperCase()}</TableCell>
+                            <TableCell>{ret.sale_id.substring(0, 8).toUpperCase()}</TableCell>
+                            <TableCell>{new Date(ret.date).toLocaleDateString()}</TableCell>
+                            <TableCell className="text-red-600">₹{ret.refund_amount.toFixed(2)}</TableCell>
+                            <TableCell className="capitalize">{ret.refund_method}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="credit">
+            <Card>
+              <CardHeader>
+                <CardTitle>Credit Sales</CardTitle>
+                <CardDescription>Track credit sales and outstanding balances</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Invoice #</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead>Paid</TableHead>
+                      <TableHead>Balance</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {creditSales.map((sale) => (
+                      <TableRow key={sale.id}>
+                        <TableCell 
+                          className="font-medium text-blue-600 cursor-pointer"
+                          onClick={() => setSelectedSale(sale)}
+                        >
+                          {sale.id.substring(0, 8).toUpperCase()}
+                        </TableCell>
+                        <TableCell>{new Date(sale.date).toLocaleDateString()}</TableCell>
+                        <TableCell>{sale.customer_name}</TableCell>
+                        <TableCell>{sale.customer_phone}</TableCell>
+                        <TableCell>₹{sale.total.toFixed(2)}</TableCell>
+                        <TableCell className="text-green-600">₹{sale.amount_paid?.toFixed(2) || "0.00"}</TableCell>
+                        <TableCell className="text-red-600 font-semibold">₹{sale.balance_amount?.toFixed(2) || "0.00"}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
       </div>
     </div>
   );
