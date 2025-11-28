@@ -162,6 +162,53 @@ const Inventory = () => {
     }
   };
 
+  const handleUpdateProduct = async () => {
+    if (!editingProduct) return;
+    try {
+      await axios.put(`${API}/products/${editingProduct.id}`, {
+        name: editingProduct.name,
+        category_id: editingProduct.category_id,
+        quantity: editingProduct.quantity,
+        unit: editingProduct.unit,
+        cost_price: editingProduct.cost_price,
+        retail_price: editingProduct.retail_price,
+        wholesale_price: editingProduct.wholesale_price,
+        supplier_name: editingProduct.supplier_name,
+        supplier_balance: editingProduct.supplier_balance
+      });
+      toast.success("Product updated");
+      setEditingProduct(null);
+      setEditProductDialog(false);
+      loadData();
+    } catch (error) {
+      toast.error("Failed to update product");
+    }
+  };
+
+  const handleRestockProduct = async () => {
+    if (!editingProduct || !restockData.quantity) {
+      toast.error("Quantity is required");
+      return;
+    }
+    try {
+      await axios.post(`${API}/products/${editingProduct.id}/restock`, restockData);
+      toast.success("Product restocked");
+      setRestockData({
+        quantity: 0,
+        cost_price: null,
+        supplier_name: "",
+        paid_amount: 0,
+        payment_source: "cash"
+      });
+      setEditingProduct(null);
+      setRestockDialog(false);
+      loadData();
+    } catch (error) {
+      toast.error("Failed to restock product");
+    }
+  };
+
+
   const handleCreateSet = async () => {
     if (!newSet.name || selectedProducts.length === 0) {
       toast.error("Set name and at least one product are required");
