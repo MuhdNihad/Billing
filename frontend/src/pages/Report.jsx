@@ -440,6 +440,24 @@ const Report = () => {
                 <CardDescription>View all sales invoices and process returns</CardDescription>
               </CardHeader>
               <CardContent>
+                <div className="mb-4 flex items-end space-x-4">
+                  <div className="flex-1">
+                    <Label>Filter by Date (Optional)</Label>
+                    <Input
+                      type="date"
+                      value={invoiceDate}
+                      onChange={(e) => setInvoiceDate(e.target.value)}
+                    />
+                  </div>
+                  {invoiceDate && (
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setInvoiceDate("")}
+                    >
+                      Clear Filter
+                    </Button>
+                  )}
+                </div>
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold mb-2">All Sales</h3>
                   <Table>
