@@ -350,6 +350,13 @@ const Inventory = () => {
                 </div>
               </CardHeader>
               <CardContent>
+                <div className="mb-4">
+                  <Input
+                    placeholder="Search categories..."
+                    value={searchCategory}
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                  />
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -359,7 +366,7 @@ const Inventory = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {categories.map((cat) => (
+                    {getFilteredCategories().map((cat) => (
                       <TableRow key={cat.id}>
                         <TableCell className="font-medium">{cat.name}</TableCell>
                         <TableCell>{new Date(cat.created_at).toLocaleDateString()}</TableCell>
