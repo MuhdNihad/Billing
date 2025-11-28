@@ -531,7 +531,87 @@ const Report = () => {
               </CardContent>
             </Card>
           </TabsContent>
+        </Tabs>
 
+        {/* Sale Details Dialog */}
+        {selectedSale && (
+          <Dialog open={!!selectedSale} onOpenChange={() => setSelectedSale(null)}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Invoice #{selectedSale.id.substring(0, 8).toUpperCase()}</DialogTitle>
+                <DialogDescription>
+                  {new Date(selectedSale.date).toLocaleString()} - {selectedSale.sale_type} Sale
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                {selectedSale.customer_name && (
+                  <div>
+                    <h3 className="font-semibold mb-2">Customer Details</h3>
+                    <p>Name: {selectedSale.customer_name}</p>
+                    {selectedSale.customer_phone && <p>Phone: {selectedSale.customer_phone}</p>}
+                  </div>
+                )}
+                
+                <div>
+                  <h3 className="font-semibold mb-2">Items Sold</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Total</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {selectedSale.items.map((item, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{item.name}</TableCell>
+                          <TableCell>{item.quantity}</TableCell>
+                          <TableCell>₹{item.unit_price.toFixed(2)}</TableCell>
+                          <TableCell>₹{item.total.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>₹{selectedSale.subtotal.toFixed(2)}</span>
+                  </div>
+                  {selectedSale.discount_amount > 0 && (
+                    <div className="flex justify-between text-red-600">
+                      <span>Discount:</span>
+                      <span>- ₹{selectedSale.discount_amount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span>₹{selectedSale.total.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Payment Method:</span>
+                    <span className="capitalize">{selectedSale.payment_method}</span>
+                  </div>
+                  {selectedSale.payment_type === "credit" && (
+                    <>
+                      <div className="flex justify-between text-green-600">
+                        <span>Amount Paid:</span>
+                        <span>₹{selectedSale.amount_paid?.toFixed(2) || "0.00"}</span>
+                      </div>
+                      <div className="flex justify-between text-red-600 font-semibold">
+                        <span>Balance:</span>
+                        <span>₹{selectedSale.balance_amount?.toFixed(2) || "0.00"}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
