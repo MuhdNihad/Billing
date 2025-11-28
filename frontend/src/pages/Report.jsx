@@ -116,6 +116,16 @@ const Report = () => {
       return;
     }
 
+    // Calculate refund amount based on payment type
+    const totalReturnAmount = returnItems.reduce((sum, item) => sum + item.total, 0);
+    let actualRefundAmount = totalReturnAmount;
+
+    // If it's a credit sale, only refund proportionally to what was paid
+    if (selectedSale.payment_type === "credit" && selectedSale.amount_paid > 0) {
+      const paidPercentage = selectedSale.amount_paid / selectedSale.total;
+      actualRefundAmount = totalReturnAmount * paidPercentage;
+    }
+
     const returnData = {
       sale_id: selectedSale.id,
       items: returnItems,
@@ -125,7 +135,7 @@ const Report = () => {
 
     try {
       await axios.post(`${API}/returns`, returnData);
-      toast.success("Return processed successfully");
+      toast.success(`Return processed successfully. Refund: ₹${actualRefundAmount.toFixed(2)}`);
       setReturnDialog(false);
       setReturnItems([]);
       setReturnReason("");
