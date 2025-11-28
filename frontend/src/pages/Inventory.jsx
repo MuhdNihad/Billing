@@ -955,6 +955,61 @@ const Inventory = () => {
         </DialogContent>
       </Dialog>
 
+
+      {/* Edit Category Dialog */}
+      <Dialog open={editCategoryDialog} onOpenChange={setEditCategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+            <DialogDescription>Update category name</DialogDescription>
+          </DialogHeader>
+          {editingCategory && (
+            <div className="space-y-4">
+              <div>
+                <Label>Category Name</Label>
+                <Input
+                  value={editingCategory.name}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                />
+              </div>
+              <Button onClick={handleUpdateCategory} className="w-full">
+                Update Category
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Set Dialog */}
+      <Dialog open={editSetDialog} onOpenChange={setEditSetDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Set</DialogTitle>
+            <DialogDescription>Update set name</DialogDescription>
+          </DialogHeader>
+          {editingSet && (
+            <div className="space-y-4">
+              <div>
+                <Label>Set Name</Label>
+                <Input
+                  value={editingSet.name}
+                  onChange={(e) => setEditingSet({ ...editingSet, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">
+                  Note: To change products in the set, please delete and recreate it.
+                </p>
+              </div>
+              <Button onClick={handleUpdateSet} className="w-full">
+                Update Set
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+
     </div>
   );
 };
