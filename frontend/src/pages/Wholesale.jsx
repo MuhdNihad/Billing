@@ -48,6 +48,15 @@ const Wholesale = () => {
     }
   };
 
+  const getFilteredItems = () => {
+    const items = itemType === "product" ? products : sets;
+    if (!searchQuery.trim()) return items;
+    
+    return items.filter(item => 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
   const addToCart = () => {
     if (!selectedItem) {
       toast.error("Please select an item");
