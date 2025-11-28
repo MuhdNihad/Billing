@@ -263,6 +263,24 @@ const Inventory = () => {
     } catch (error) {
       toast.error("Failed to delete set");
     }
+
+
+  const handleUpdateSet = async () => {
+    if (!editingSet || !editingSet.name.trim()) {
+      toast.error("Set name is required");
+      return;
+    }
+    try {
+      // Note: We don't have a PUT endpoint for sets, so we'd need to delete and recreate
+      // For now, just update the name if the backend supports it
+      toast.info("Set editing requires backend support - please recreate the set");
+      setEditSetDialog(false);
+      setEditingSet(null);
+    } catch (error) {
+      toast.error("Failed to update set");
+    }
+  };
+
   };
 
   const addProductToSet = (product) => {
