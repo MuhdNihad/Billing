@@ -15,9 +15,24 @@ const Inventory = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [sets, setSets] = useState([]);
+  const [searchCategory, setSearchCategory] = useState("");
+  const [searchProduct, setSearchProduct] = useState("");
+  const [searchSet, setSearchSet] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [inventoryValue, setInventoryValue] = useState(null);
   const [categoryDialog, setCategoryDialog] = useState(false);
   const [productDialog, setProductDialog] = useState(false);
+  const [editProductDialog, setEditProductDialog] = useState(false);
+  const [restockDialog, setRestockDialog] = useState(false);
   const [setDialog, setSetDialog] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [restockData, setRestockData] = useState({
+    quantity: 0,
+    cost_price: null,
+    supplier_name: "",
+    paid_amount: 0,
+    payment_source: "cash"
+  });
   const [newCategory, setNewCategory] = useState("");
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -27,6 +42,8 @@ const Inventory = () => {
     cost_price: 0,
     retail_price: 0,
     wholesale_price: 0,
+    supplier_name: "",
+    supplier_balance: 0
   });
   const [newSet, setNewSet] = useState({
     name: "",
