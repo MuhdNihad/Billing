@@ -21,10 +21,14 @@ const Inventory = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [inventoryValue, setInventoryValue] = useState(null);
   const [categoryDialog, setCategoryDialog] = useState(false);
+  const [editCategoryDialog, setEditCategoryDialog] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
   const [editProductDialog, setEditProductDialog] = useState(false);
   const [restockDialog, setRestockDialog] = useState(false);
   const [setDialog, setSetDialog] = useState(false);
+  const [editSetDialog, setEditSetDialog] = useState(false);
+  const [editingSet, setEditingSet] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [restockData, setRestockData] = useState({
     quantity: 0,
