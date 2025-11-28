@@ -57,9 +57,11 @@ const Report = () => {
         </div>
 
         <Tabs defaultValue="daily" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="daily" data-testid="tab-daily">Daily Report</TabsTrigger>
             <TabsTrigger value="monthly" data-testid="tab-monthly">Monthly Report</TabsTrigger>
+            <TabsTrigger value="invoices" data-testid="tab-invoices">Invoices/Returns</TabsTrigger>
+            <TabsTrigger value="credit" data-testid="tab-credit">Credit Sales</TabsTrigger>
           </TabsList>
 
           <TabsContent value="daily">
