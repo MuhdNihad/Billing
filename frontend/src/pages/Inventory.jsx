@@ -315,7 +315,7 @@ const Inventory = () => {
           <TabsContent value="categories">
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mb-4">
                   <div>
                     <CardTitle>Product Categories</CardTitle>
                     <CardDescription>Organize your products by categories</CardDescription>
