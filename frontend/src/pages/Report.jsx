@@ -515,7 +515,7 @@ const Report = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {returns.map((ret) => (
+                        {getFilteredReturns().map((ret) => (
                           <TableRow key={ret.id}>
                             <TableCell>{ret.id.substring(0, 8).toUpperCase()}</TableCell>
                             <TableCell>{ret.sale_id.substring(0, 8).toUpperCase()}</TableCell>
