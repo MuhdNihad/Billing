@@ -811,6 +811,42 @@ async def get_sale(sale_id: str):
     return sale
 
 
+@api_router.put("/sales/{sale_id}")
+async def update_sale_payment(sale_id: str, amount_paid: float, balance_amount: float, payment_method: str):
+    """Update credit sale payment"""
+    sale = await db.sales.find_one({"id": sale_id}, {"_id": 0})
+    if not sale:
+        raise HTTPException(status_code=404, detail="Sale not found")
+    
+    # Calculate payment received
+    payment_received = amount_paid - sale.get('amount_paid', 0)
+    
+    # Update sale record
+    await db.sales.update_one(
+        {"id": sale_id},
+        {"$set": {
+            "amount_paid": amount_paid,
+            "balance_amount": balance_amount
+        }}
+    )
+    
+    # Update cash/gpay balance
+    if payment_received > 0:
+        if payment_method == "cash":
+            await update_balance(cash_change=payment_received)
+        else:
+            await update_balance(gpay_change=payment_received)
+    
+    updated_sale = await db.sales.find_one({"id": sale_id}, {"_id": 0})
+    if isinstance(updated_sale['date'], str):
+        updated_sale['date'] = datetime.fromisoformat(updated_sale['date'])
+    if isinstance(updated_sale['created_at'], str):
+        updated_sale['created_at'] = datetime.fromisoformat(updated_sale['created_at'])
+    
+    return updated_sale
+
+
+
 # ============= RETURN/REFUND ROUTES =============
 
 @api_router.post("/returns", response_model=Return)
