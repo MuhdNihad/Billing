@@ -57,17 +57,49 @@ const Inventory = () => {
 
   const loadData = async () => {
     try {
-      const [catRes, prodRes, setRes] = await Promise.all([
+      const [catRes, prodRes, setRes, invValue] = await Promise.all([
         axios.get(`${API}/categories`),
         axios.get(`${API}/products`),
         axios.get(`${API}/sets`),
+        axios.get(`${API}/inventory/total-value`),
       ]);
       setCategories(catRes.data);
       setProducts(prodRes.data);
       setSets(setRes.data);
+      setInventoryValue(invValue.data);
     } catch (error) {
       toast.error("Failed to load data");
     }
+  };
+
+  const getFilteredCategories = () => {
+    if (!searchCategory.trim()) return categories;
+    return categories.filter(cat =>
+      cat.name.toLowerCase().includes(searchCategory.toLowerCase())
+    );
+  };
+
+  const getFilteredProducts = () => {
+    let filtered = products;
+    
+    if (selectedCategoryId) {
+      filtered = filtered.filter(p => p.category_id === selectedCategoryId);
+    }
+    
+    if (searchProduct.trim()) {
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(searchProduct.toLowerCase())
+      );
+    }
+    
+    return filtered;
+  };
+
+  const getFilteredSets = () => {
+    if (!searchSet.trim()) return sets;
+    return sets.filter(s =>
+      s.name.toLowerCase().includes(searchSet.toLowerCase())
+    );
   };
 
   const handleCreateCategory = async () => {
