@@ -145,7 +145,14 @@ const Report = () => {
       // Add item
       setReturnItems([...returnItems, {
         product_id: item.product_id || null,
-
+        set_id: item.set_id || null,
+        name: item.name,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total: item.total
+      }]);
+    }
+  };
 
   const handlePayCredit = async () => {
     if (!paymentSale || paymentAmount <= 0) {
