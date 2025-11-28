@@ -570,8 +570,10 @@ const Inventory = () => {
                     onChange={(e) => setSearchProduct(e.target.value)}
                   />
                   {selectedCategoryId && (
-                    <div className="flex items-center">
-                      <span className="text-sm text-gray-600">Filtered by category</span>
+                    <div className="flex items-center bg-blue-50 p-2 rounded">
+                      <span className="text-sm text-gray-700">
+                        Filtered by: <span className="font-semibold">{categories.find(c => c.id === selectedCategoryId)?.name || "Category"}</span>
+                      </span>
                       <Button
                         variant="ghost"
                         size="sm"
