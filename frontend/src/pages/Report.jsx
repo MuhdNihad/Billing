@@ -23,6 +23,9 @@ const Report = () => {
 
   useEffect(() => {
     loadDailyReport();
+    loadAllSales();
+    loadCreditSales();
+    loadReturns();
   }, []);
 
   const loadDailyReport = async () => {
