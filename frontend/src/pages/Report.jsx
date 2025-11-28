@@ -842,6 +842,76 @@ const Report = () => {
             </DialogContent>
           </Dialog>
         )}
+
+
+        {/* Credit Payment Dialog */}
+        {paymentDialog && paymentSale && (
+          <Dialog open={paymentDialog} onOpenChange={setPaymentDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Record Credit Payment</DialogTitle>
+                <DialogDescription>
+                  Invoice #{paymentSale.id.substring(0, 8).toUpperCase()} - {paymentSale.customer_name}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-3 rounded space-y-1">
+                  <p className="text-sm">
+                    <span className="font-medium">Total Amount:</span> ₹{paymentSale.total.toFixed(2)}
+                  </p>
+                  <p className="text-sm text-green-600">
+                    <span className="font-medium">Paid:</span> ₹{(paymentSale.amount_paid || 0).toFixed(2)}
+                  </p>
+                  <p className="text-sm text-red-600">
+                    <span className="font-medium">Outstanding Balance:</span> ₹{paymentSale.balance_amount.toFixed(2)}
+                  </p>
+                </div>
+
+                <div>
+                  <Label>Payment Amount (₹)</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max={paymentSale.balance_amount}
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(parseFloat(e.target.value) || 0)}
+                    placeholder="Enter payment amount"
+                  />
+                </div>
+
+                <div>
+                  <Label>Payment Method</Label>
+                  <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cash">Cash</SelectItem>
+                      <SelectItem value="gpay">GPay</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {paymentAmount > 0 && (
+                  <div className="bg-blue-50 p-3 rounded">
+                    <p className="text-sm font-medium">
+                      Remaining Balance: ₹{(paymentSale.balance_amount - paymentAmount).toFixed(2)}
+                    </p>
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handlePayCredit} 
+                  className="w-full"
+                  disabled={paymentAmount <= 0 || paymentAmount > paymentSale.balance_amount}
+                >
+                  Record Payment
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
       </div>
     </div>
   );
