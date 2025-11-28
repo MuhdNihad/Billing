@@ -73,7 +73,13 @@ const Report = () => {
   };
 
   const loadReturns = async () => {
-
+    try {
+      const response = await axios.get(`${API}/returns`);
+      setReturns(response.data);
+    } catch (error) {
+      toast.error("Failed to load returns");
+    }
+  };
 
   const getFilteredSales = () => {
     if (!invoiceDate) return allSales;
@@ -93,14 +99,6 @@ const Report = () => {
       const retDate = new Date(ret.date);
       return retDate.toDateString() === targetDate.toDateString();
     });
-  };
-
-    try {
-      const response = await axios.get(`${API}/returns`);
-      setReturns(response.data);
-    } catch (error) {
-      toast.error("Failed to load returns");
-    }
   };
 
   return (
