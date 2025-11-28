@@ -176,26 +176,35 @@ const Retail = () => {
       return;
     }
 
-    if (paymentMethod === "cash" && gpayReturn === 0 && cashReceived < calculateTotal()) {
-      toast.error("Insufficient cash received");
+    if (paymentType === "credit" && (!customerName || !customerPhone)) {
+      toast.error("Customer name and phone are required for credit sales");
       return;
     }
-    
-    if (paymentMethod === "cash" && gpayReturn > 0 && (cashReceived + gpayReturn) < calculateTotal()) {
-      toast.error("Insufficient payment (cash + gpay return)");
-      return;
+
+    if (paymentType === "full") {
+      if (paymentMethod === "cash" && gpayReturn === 0 && cashReceived < calculateTotal()) {
+        toast.error("Insufficient cash received");
+        return;
+      }
+      
+      if (paymentMethod === "cash" && gpayReturn > 0 && (cashReceived + gpayReturn) < calculateTotal()) {
+        toast.error("Insufficient payment (cash + gpay return)");
+        return;
+      }
     }
 
     const saleData = {
       sale_type: "retail",
+      payment_type: paymentType,
       customer_name: customerName || null,
       customer_phone: customerPhone || null,
       items: cart,
       discount_type: discountType,
       discount_value: discountValue,
       payment_method: paymentMethod,
-      cash_received: paymentMethod === "cash" ? cashReceived : null,
+      cash_received: paymentMethod === "cash" && paymentType === "full" ? cashReceived : null,
       gpay_return: gpayReturn > 0 ? gpayReturn : null,
+      amount_paid: paymentType === "credit" ? amountPaid : null,
     };
 
     try {
@@ -209,9 +218,11 @@ const Retail = () => {
       setCart([]);
       setDiscountValue(0);
       setCashReceived(0);
+      setAmountPaid(0);
       setGpayReturn(0);
       setCustomerName("");
       setCustomerPhone("");
+      setPaymentType("full");
       loadData();
     } catch (error) {
       toast.error("Failed to complete sale");
