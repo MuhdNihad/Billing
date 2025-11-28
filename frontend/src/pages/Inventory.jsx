@@ -600,10 +600,22 @@ const Inventory = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {getFilteredProducts().map((prod) => (
-                        <TableRow key={prod.id}>
-                          <TableCell className="font-medium">{prod.name}</TableCell>
-                          <TableCell>{prod.category_name}</TableCell>
+                      {getFilteredProducts().length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                            {selectedCategoryId 
+                              ? `No products found in ${categories.find(c => c.id === selectedCategoryId)?.name || "this category"}`
+                              : searchProduct 
+                                ? "No products match your search"
+                                : "No products available. Add your first product!"
+                            }
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        getFilteredProducts().map((prod) => (
+                          <TableRow key={prod.id}>
+                            <TableCell className="font-medium">{prod.name}</TableCell>
+                            <TableCell>{prod.category_name}</TableCell>
                           <TableCell>{prod.quantity}</TableCell>
                           <TableCell className="capitalize">{prod.unit}</TableCell>
                           <TableCell>₹{prod.cost_price}</TableCell>
