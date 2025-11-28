@@ -20,6 +20,7 @@ const Report = () => {
   const [creditSales, setCreditSales] = useState([]);
   const [returns, setReturns] = useState([]);
   const [selectedSale, setSelectedSale] = useState(null);
+  const [invoiceDate, setInvoiceDate] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
