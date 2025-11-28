@@ -132,6 +132,24 @@ const Inventory = () => {
     }
   };
 
+
+  const handleUpdateCategory = async () => {
+    if (!editingCategory || !editingCategory.name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+    try {
+      await axios.put(`${API}/categories/${editingCategory.id}`, { name: editingCategory.name });
+      toast.success("Category updated");
+      setEditingCategory(null);
+      setEditCategoryDialog(false);
+      loadData();
+    } catch (error) {
+      toast.error("Failed to update category");
+    }
+  };
+
+
   const handleCreateProduct = async () => {
     if (!newProduct.name || !newProduct.category_id) {
       toast.error("Name and category are required");
