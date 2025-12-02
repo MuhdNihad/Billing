@@ -43,6 +43,7 @@ services:
       - REACT_APP_API_URL=http://backend:7000
     depends_on:
       - backend
+    restart: always
 
 volumes:
   mongo-data:
