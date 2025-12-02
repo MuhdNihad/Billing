@@ -1,26 +1,20 @@
+version: "3.9"
+
 services:
   backend:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "7000:80"
     environment:
       - MONGO_URL=mongodb://db:27017
       - DB_NAME=billing
+      # Ensure this matches the frontend port
       - CORS_ORIGINS=http://localhost:3000
     depends_on:
       - db
     volumes:
       - ./backend:/app
-    restart: always
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend:/app
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "80"]
     restart: always
 
   db:
@@ -30,6 +24,25 @@ services:
     volumes:
       - mongo-data:/data/db
     restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      # Create an anonymous volume for node_modules to prevent 
+      # host folder from overwriting container installed packages
+      - /app/node_modules
+    # These two lines are often required for React scripts to exit/start correctly in Docker
+    stdin_open: true 
+    tty: true
+    environment:
+      # If your frontend calls the backend, it usually does so via the browser (localhost)
+      #- REACT_APP_API_URL=http://localhost:7000
+      - REACT_APP_API_URL=http://backend:7000
+    depends_on:
+      - backend
 
 volumes:
   mongo-data:

@@ -11,7 +11,7 @@ import Wholesale from "./pages/Wholesale";
 import Expense from "./pages/Expense";
 import Report from "./pages/Report";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = "http://localhost:7000";
 export const API = `${BACKEND_URL}/api`;
 
 export { axios, toast };
