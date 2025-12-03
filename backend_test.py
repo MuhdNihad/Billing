@@ -2050,6 +2050,7 @@ def main():
         tester.test_new_money_transfer_features,  # NEW: Test the new money transfer features
         tester.test_new_deposit_features,  # NEW: Test the deposit features (cash_deposit, gpay_deposit)
         tester.test_old_money_transfer_types,  # Verify OLD transfer types still work
+        tester.test_balance_validation_fixes,  # NEW: Test balance validation fixes to prevent negative balances
         tester.test_credit_sales,
         tester.test_category_editing,
         tester.test_inventory_total_value,
