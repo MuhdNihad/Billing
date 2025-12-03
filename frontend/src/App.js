@@ -10,6 +10,7 @@ import Retail from "./pages/Retail";
 import Wholesale from "./pages/Wholesale";
 import Expense from "./pages/Expense";
 import Report from "./pages/Report";
+import CashDrawer from "./pages/CashDrawer";
 
 const BACKEND_URL = "http://localhost:7000";
 export const API = `${BACKEND_URL}/api`;
@@ -27,6 +28,7 @@ function App() {
           <Route path="/wholesale" element={<Wholesale />} />
           <Route path="/expense" element={<Expense />} />
           <Route path="/report" element={<Report />} />
+          <Route path="/cash-drawer" element={<CashDrawer />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors />
