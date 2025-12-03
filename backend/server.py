@@ -658,6 +658,12 @@ async def create_money_transfer(input: MoneyTransferCreate):
     elif input.transfer_type == "gpay_withdrawal":
         # Withdraw GPay from business
         await update_balance(gpay_change=-input.amount)
+    elif input.transfer_type == "cash_deposit":
+        # Deposit cash to business
+        await update_balance(cash_change=input.amount)
+    elif input.transfer_type == "gpay_deposit":
+        # Deposit GPay to business
+        await update_balance(gpay_change=input.amount)
     
     return transfer
 
