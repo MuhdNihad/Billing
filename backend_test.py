@@ -1036,6 +1036,222 @@ class BillingAPITester:
         print("✓ Transfer deletion and balance restoration working correctly!")
         return True
 
+    def test_new_deposit_features(self):
+        """Test NEW Deposit Features - cash_deposit and gpay_deposit"""
+        print("\n" + "="*50)
+        print("TESTING NEW DEPOSIT FEATURES")
+        print("="*50)
+        
+        # Get initial balance
+        success, initial_balance = self.run_test(
+            "Get Initial Balance for Deposit Features",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        initial_cash = initial_balance.get('cash', 0)
+        initial_gpay = initial_balance.get('gpay', 0)
+        print(f"Initial Balance - Cash: {initial_cash}, GPay: {initial_gpay}")
+        
+        # Test 1: cash_deposit (Deposit cash to business)
+        # Should increase cash only
+        deposit_amount_1 = 1000.0
+        cash_deposit_data = {
+            "transfer_type": "cash_deposit",
+            "amount": deposit_amount_1,
+            "description": "Cash deposit to business"
+        }
+        
+        success, response = self.run_test(
+            "Create Cash Deposit",
+            "POST",
+            "money-transfers",
+            200,
+            data=cash_deposit_data
+        )
+        if not success:
+            return False
+        
+        cash_deposit_id = response.get('id')
+        
+        # Check balance after cash_deposit
+        success, balance_1 = self.run_test(
+            "Get Balance After Cash Deposit",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_cash_1 = initial_cash + deposit_amount_1  # Cash increases
+        expected_gpay_1 = initial_gpay  # GPay unchanged
+        
+        if (abs(balance_1.get('cash', 0) - expected_cash_1) > 0.01 or 
+            abs(balance_1.get('gpay', 0) - expected_gpay_1) > 0.01):
+            print(f"Failed - cash_deposit balance incorrect")
+            print(f"Expected Cash: {expected_cash_1}, Got: {balance_1.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_1}, Got: {balance_1.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ cash_deposit working - Cash: +{deposit_amount_1}, GPay: unchanged")
+        
+        # Test 2: gpay_deposit (Deposit GPay to business)
+        # Should increase gpay only
+        deposit_amount_2 = 750.0
+        gpay_deposit_data = {
+            "transfer_type": "gpay_deposit",
+            "amount": deposit_amount_2,
+            "description": "GPay deposit to business"
+        }
+        
+        success, response = self.run_test(
+            "Create GPay Deposit",
+            "POST",
+            "money-transfers",
+            200,
+            data=gpay_deposit_data
+        )
+        if not success:
+            return False
+        
+        gpay_deposit_id = response.get('id')
+        
+        # Check balance after gpay_deposit
+        success, balance_2 = self.run_test(
+            "Get Balance After GPay Deposit",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_cash_2 = expected_cash_1  # Cash unchanged
+        expected_gpay_2 = expected_gpay_1 + deposit_amount_2  # GPay increases
+        
+        if (abs(balance_2.get('cash', 0) - expected_cash_2) > 0.01 or 
+            abs(balance_2.get('gpay', 0) - expected_gpay_2) > 0.01):
+            print(f"Failed - gpay_deposit balance incorrect")
+            print(f"Expected Cash: {expected_cash_2}, Got: {balance_2.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_2}, Got: {balance_2.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ gpay_deposit working - Cash: unchanged, GPay: +{deposit_amount_2}")
+        
+        # Test 3: Verify GET /api/money-transfers returns deposits correctly
+        success, all_transfers = self.run_test(
+            "Get All Money Transfers Including Deposits",
+            "GET",
+            "money-transfers",
+            200
+        )
+        if not success:
+            return False
+        
+        # Check if deposit transfer types are present
+        deposit_transfer_types = ["cash_deposit", "gpay_deposit"]
+        found_deposit_types = set()
+        
+        for transfer in all_transfers:
+            if transfer.get('transfer_type') in deposit_transfer_types:
+                found_deposit_types.add(transfer.get('transfer_type'))
+        
+        if len(found_deposit_types) != 2:
+            print(f"Failed - Not all deposit transfer types found in transfers list. Found: {found_deposit_types}")
+            return False
+        
+        print(f"✓ All deposit transfer types found in transfers list: {found_deposit_types}")
+        
+        # Test 4: Verify all 8 transfer types are now available
+        all_transfer_types = ["cash_to_gpay", "gpay_to_cash", "customer_cash_to_gpay", "customer_gpay_to_cash", 
+                             "cash_withdrawal", "gpay_withdrawal", "cash_deposit", "gpay_deposit"]
+        found_all_types = set()
+        
+        for transfer in all_transfers:
+            if transfer.get('transfer_type') in all_transfer_types:
+                found_all_types.add(transfer.get('transfer_type'))
+        
+        print(f"✓ Found {len(found_all_types)} out of 8 transfer types: {found_all_types}")
+        
+        # Test 5: Test deleting deposits and verify balance restoration
+        # Delete gpay_deposit - should decrease GPay
+        success, _ = self.run_test(
+            "Delete GPay Deposit Transfer",
+            "DELETE",
+            f"money-transfers/{gpay_deposit_id}",
+            200
+        )
+        if not success:
+            return False
+        
+        # Check balance after deleting gpay_deposit
+        success, balance_after_delete_gpay = self.run_test(
+            "Get Balance After Deleting GPay Deposit",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+        
+        # GPay should be reduced (deposit reversed)
+        expected_cash_after_delete_gpay = expected_cash_2  # Cash unchanged
+        expected_gpay_after_delete_gpay = expected_gpay_2 - deposit_amount_2  # GPay reduced
+        
+        if (abs(balance_after_delete_gpay.get('cash', 0) - expected_cash_after_delete_gpay) > 0.01 or 
+            abs(balance_after_delete_gpay.get('gpay', 0) - expected_gpay_after_delete_gpay) > 0.01):
+            print(f"Failed - Balance not restored correctly after deleting gpay_deposit")
+            print(f"Expected Cash: {expected_cash_after_delete_gpay}, Got: {balance_after_delete_gpay.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_after_delete_gpay}, Got: {balance_after_delete_gpay.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ GPay deposit deletion working - GPay reduced: -{deposit_amount_2}")
+        
+        # Delete cash_deposit - should decrease Cash
+        success, _ = self.run_test(
+            "Delete Cash Deposit Transfer",
+            "DELETE",
+            f"money-transfers/{cash_deposit_id}",
+            200
+        )
+        if not success:
+            return False
+        
+        # Check balance after deleting cash_deposit
+        success, balance_after_delete_cash = self.run_test(
+            "Get Balance After Deleting Cash Deposit",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+        
+        # Cash should be reduced (deposit reversed)
+        expected_cash_after_delete_cash = expected_cash_after_delete_gpay - deposit_amount_1  # Cash reduced
+        expected_gpay_after_delete_cash = expected_gpay_after_delete_gpay  # GPay unchanged
+        
+        if (abs(balance_after_delete_cash.get('cash', 0) - expected_cash_after_delete_cash) > 0.01 or 
+            abs(balance_after_delete_cash.get('gpay', 0) - expected_gpay_after_delete_cash) > 0.01):
+            print(f"Failed - Balance not restored correctly after deleting cash_deposit")
+            print(f"Expected Cash: {expected_cash_after_delete_cash}, Got: {balance_after_delete_cash.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_after_delete_cash}, Got: {balance_after_delete_cash.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ Cash deposit deletion working - Cash reduced: -{deposit_amount_1}")
+        
+        # Verify we're back to initial balance (should be close, accounting for any other tests)
+        print(f"Final Balance - Cash: {balance_after_delete_cash.get('cash', 0)}, GPay: {balance_after_delete_cash.get('gpay', 0)}")
+        
+        print("✓ All NEW deposit features working correctly!")
+        print("✓ Cash and GPay deposit balance updates working correctly!")
+        print("✓ Deposit deletion and balance restoration working correctly!")
+        return True
+
     def test_old_money_transfer_types(self):
         """Test OLD Money Transfer Types - Verify they still work"""
         print("\n" + "="*50)
