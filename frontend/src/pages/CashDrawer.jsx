@@ -310,13 +310,12 @@ const CashDrawer = () => {
                   <TableHead>Type</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Amount</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {withdrawals.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-gray-500">
+                    <TableCell colSpan={4} className="text-center text-gray-500">
                       No withdrawals yet
                     </TableCell>
                   </TableRow>
@@ -335,15 +334,6 @@ const CashDrawer = () => {
                       </TableCell>
                       <TableCell>{withdrawal.description || "-"}</TableCell>
                       <TableCell className="font-semibold text-red-600">-₹{withdrawal.amount.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteWithdrawal(withdrawal.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   ))
                 )}
