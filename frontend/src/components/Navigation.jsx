@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, ShoppingCart, Banknote, Wallet, FileText } from "lucide-react";
+import { Home, Package, ShoppingCart, Banknote, Wallet, FileText, DollarSign } from "lucide-react";
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const Navigation = () => {
     { path: "/retail", label: "Retail", icon: ShoppingCart },
     { path: "/wholesale", label: "Wholesale", icon: Banknote },
     { path: "/expense", label: "Expense", icon: Wallet },
+    { path: "/cash-drawer", label: "Cash Drawer", icon: DollarSign },
     { path: "/report", label: "Report", icon: FileText },
   ];
 
