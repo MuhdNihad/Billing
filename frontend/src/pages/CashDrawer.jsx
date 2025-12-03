@@ -151,8 +151,71 @@ const CashDrawer = () => {
     }
   };
 
+  const handleAddMoney = async () => {
+    const cashAmount = parseFloat(newDeposit.cash_amount) || 0;
+    const gpayAmount = parseFloat(newDeposit.gpay_amount) || 0;
+
+    if (cashAmount <= 0 && gpayAmount <= 0) {
+      toast.error("Please enter an amount to add");
+      return;
+    }
+
+    try {
+      const promises = [];
+
+      // To add money, we reverse the withdrawal by using gpay_to_cash and cash_to_gpay
+      // But since we want to just add to balance, we can create a special transfer
+      // Or we can use the existing system by transferring from external source
+      
+      if (cashAmount > 0) {
+        promises.push(
+          axios.post(`${API}/money-transfers`, {
+            transfer_type: "gpay_to_cash",
+            amount: cashAmount,
+            description: newDeposit.description || "Cash deposit to drawer",
+            date: newDeposit.date,
+          })
+        );
+      }
+
+      if (gpayAmount > 0) {
+        promises.push(
+          axios.post(`${API}/money-transfers`, {
+            transfer_type: "cash_to_gpay",
+            amount: gpayAmount,
+            description: newDeposit.description || "GPay deposit to drawer",
+            date: newDeposit.date,
+          })
+        );
+      }
+
+      await Promise.all(promises);
+      toast.success("Money added successfully");
+      setNewDeposit({
+        cash_amount: 0,
+        gpay_amount: 0,
+        description: "",
+        date: new Date().toISOString().split("T")[0],
+      });
+      setAddMoneyDialog(false);
+      loadData();
+    } catch (error) {
+      toast.error("Failed to add money");
+    }
+  };
+
+  const getFilteredWithdrawals = () => {
+    if (!selectedDate) return withdrawals;
+    
+    const targetDate = new Date(selectedDate);
+    return withdrawals.filter(withdrawal => {
+      const withdrawalDate = new Date(withdrawal.date);
+      return withdrawalDate.toDateString() === targetDate.toDateString();
+    });
+  };
+
   const getTotalWithdrawals = () => {
-    return withdrawals.reduce((sum, w) => sum + w.amount, 0);
+    return getFilteredWithdrawals().reduce((sum, w) => sum + w.amount, 0);
   };
 
   return (
