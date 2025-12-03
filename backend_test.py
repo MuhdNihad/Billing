@@ -1036,6 +1036,207 @@ class BillingAPITester:
         print("✓ Transfer deletion and balance restoration working correctly!")
         return True
 
+    def test_old_money_transfer_types(self):
+        """Test OLD Money Transfer Types - Verify they still work"""
+        print("\n" + "="*50)
+        print("TESTING OLD MONEY TRANSFER TYPES")
+        print("="*50)
+        
+        # Get initial balance
+        success, initial_balance = self.run_test(
+            "Get Initial Balance for Old Transfer Types",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        initial_cash = initial_balance.get('cash', 0)
+        initial_gpay = initial_balance.get('gpay', 0)
+        print(f"Initial Balance - Cash: {initial_cash}, GPay: {initial_gpay}")
+        
+        # Test OLD transfer type 1: cash_to_gpay (Own money: Cash → GPay)
+        transfer_amount_1 = 400.0
+        cash_to_gpay_data = {
+            "transfer_type": "cash_to_gpay",
+            "amount": transfer_amount_1,
+            "description": "Old transfer type: cash to gpay"
+        }
+        
+        success, response = self.run_test(
+            "Create OLD Cash to GPay Transfer",
+            "POST",
+            "money-transfers",
+            200,
+            data=cash_to_gpay_data
+        )
+        if not success:
+            return False
+        
+        old_transfer_1_id = response.get('id')
+        
+        # Check balance after cash_to_gpay
+        success, balance_1 = self.run_test(
+            "Get Balance After OLD Cash to GPay",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_cash_1 = initial_cash - transfer_amount_1  # Cash decreases
+        expected_gpay_1 = initial_gpay + transfer_amount_1  # GPay increases
+        
+        if (abs(balance_1.get('cash', 0) - expected_cash_1) > 0.01 or 
+            abs(balance_1.get('gpay', 0) - expected_gpay_1) > 0.01):
+            print(f"Failed - OLD cash_to_gpay balance incorrect")
+            print(f"Expected Cash: {expected_cash_1}, Got: {balance_1.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_1}, Got: {balance_1.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ OLD cash_to_gpay working - Cash: -{transfer_amount_1}, GPay: +{transfer_amount_1}")
+        
+        # Test OLD transfer type 2: gpay_to_cash (Own money: GPay → Cash)
+        transfer_amount_2 = 250.0
+        gpay_to_cash_data = {
+            "transfer_type": "gpay_to_cash",
+            "amount": transfer_amount_2,
+            "description": "Old transfer type: gpay to cash"
+        }
+        
+        success, response = self.run_test(
+            "Create OLD GPay to Cash Transfer",
+            "POST",
+            "money-transfers",
+            200,
+            data=gpay_to_cash_data
+        )
+        if not success:
+            return False
+        
+        old_transfer_2_id = response.get('id')
+        
+        # Check balance after gpay_to_cash
+        success, balance_2 = self.run_test(
+            "Get Balance After OLD GPay to Cash",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        expected_cash_2 = expected_cash_1 + transfer_amount_2  # Cash increases
+        expected_gpay_2 = expected_gpay_1 - transfer_amount_2  # GPay decreases
+        
+        if (abs(balance_2.get('cash', 0) - expected_cash_2) > 0.01 or 
+            abs(balance_2.get('gpay', 0) - expected_gpay_2) > 0.01):
+            print(f"Failed - OLD gpay_to_cash balance incorrect")
+            print(f"Expected Cash: {expected_cash_2}, Got: {balance_2.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_2}, Got: {balance_2.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ OLD gpay_to_cash working - Cash: +{transfer_amount_2}, GPay: -{transfer_amount_2}")
+        
+        # Verify GET /api/money-transfers includes old transfer types
+        success, all_transfers = self.run_test(
+            "Get All Transfers Including Old Types",
+            "GET",
+            "money-transfers",
+            200
+        )
+        if not success:
+            return False
+        
+        # Check if old transfer types are present
+        old_transfer_types = ["cash_to_gpay", "gpay_to_cash"]
+        found_old_types = set()
+        
+        for transfer in all_transfers:
+            if transfer.get('transfer_type') in old_transfer_types:
+                found_old_types.add(transfer.get('transfer_type'))
+        
+        if len(found_old_types) != 2:
+            print(f"Failed - Not all old transfer types found. Found: {found_old_types}")
+            return False
+        
+        print(f"✓ All old transfer types found in transfers list: {found_old_types}")
+        
+        # Test deletion of old transfer types
+        # Delete old transfer 2 (gpay_to_cash)
+        success, _ = self.run_test(
+            "Delete OLD GPay to Cash Transfer",
+            "DELETE",
+            f"money-transfers/{old_transfer_2_id}",
+            200
+        )
+        if not success:
+            return False
+        
+        # Check balance after deleting old gpay_to_cash
+        success, balance_after_delete_2 = self.run_test(
+            "Get Balance After Deleting OLD GPay to Cash",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+        
+        # Reverse: cash increases, gpay decreases -> cash decreases, gpay increases
+        expected_cash_after_delete_2 = expected_cash_2 - transfer_amount_2  # Cash decreases
+        expected_gpay_after_delete_2 = expected_gpay_2 + transfer_amount_2  # GPay increases
+        
+        if (abs(balance_after_delete_2.get('cash', 0) - expected_cash_after_delete_2) > 0.01 or 
+            abs(balance_after_delete_2.get('gpay', 0) - expected_gpay_after_delete_2) > 0.01):
+            print(f"Failed - Balance not restored correctly after deleting OLD gpay_to_cash")
+            print(f"Expected Cash: {expected_cash_after_delete_2}, Got: {balance_after_delete_2.get('cash', 0)}")
+            print(f"Expected GPay: {expected_gpay_after_delete_2}, Got: {balance_after_delete_2.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ OLD GPay to Cash deletion working - Cash: -{transfer_amount_2}, GPay: +{transfer_amount_2}")
+        
+        # Delete old transfer 1 (cash_to_gpay)
+        success, _ = self.run_test(
+            "Delete OLD Cash to GPay Transfer",
+            "DELETE",
+            f"money-transfers/{old_transfer_1_id}",
+            200
+        )
+        if not success:
+            return False
+        
+        # Check balance after deleting old cash_to_gpay
+        success, final_balance = self.run_test(
+            "Get Final Balance After Deleting OLD Transfers",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+        
+        # Reverse: cash decreases, gpay increases -> cash increases, gpay decreases
+        expected_final_cash = expected_cash_after_delete_2 + transfer_amount_1  # Cash increases
+        expected_final_gpay = expected_gpay_after_delete_2 - transfer_amount_1  # GPay decreases
+        
+        if (abs(final_balance.get('cash', 0) - expected_final_cash) > 0.01 or 
+            abs(final_balance.get('gpay', 0) - expected_final_gpay) > 0.01):
+            print(f"Failed - Balance not restored correctly after deleting OLD cash_to_gpay")
+            print(f"Expected Cash: {expected_final_cash}, Got: {final_balance.get('cash', 0)}")
+            print(f"Expected GPay: {expected_final_gpay}, Got: {final_balance.get('gpay', 0)}")
+            return False
+        
+        print(f"✓ OLD Cash to GPay deletion working - Cash: +{transfer_amount_1}, GPay: -{transfer_amount_1}")
+        
+        print(f"Final Balance - Cash: {final_balance.get('cash', 0)}, GPay: {final_balance.get('gpay', 0)}")
+        
+        print("✓ All OLD money transfer types still working correctly!")
+        print("✓ OLD transfer deletion and balance restoration working correctly!")
+        return True
+
     def test_credit_sales(self):
         """Test Credit Sales"""
         print("\n" + "="*50)
