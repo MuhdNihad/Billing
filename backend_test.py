@@ -4,7 +4,7 @@ from datetime import datetime, date
 import json
 
 class BillingAPITester:
-    def __init__(self, base_url="https://billing-update.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://money-transfer-app-26.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
