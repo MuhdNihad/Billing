@@ -256,8 +256,9 @@ const Expense = () => {
         </div>
 
         <Tabs defaultValue="expenses" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="expenses" data-testid="tab-expenses">Expenses</TabsTrigger>
+            <TabsTrigger value="categories" data-testid="tab-categories">Categories</TabsTrigger>
             <TabsTrigger value="transfers" data-testid="tab-transfers">Money Transfer</TabsTrigger>
           </TabsList>
 
