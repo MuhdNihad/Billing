@@ -143,6 +143,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "NEW Money Transfer Features - Cash Drawer and Customer Exchange"
     - "All critical backend features tested and working"
   stuck_tasks: []
   test_all: true
