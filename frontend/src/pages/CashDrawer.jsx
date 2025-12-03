@@ -143,17 +143,6 @@ const CashDrawer = () => {
     }
   };
 
-  const handleDeleteWithdrawal = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this withdrawal?")) return;
-    try {
-      await axios.delete(`${API}/money-transfers/${id}`);
-      toast.success("Withdrawal deleted");
-      loadData();
-    } catch (error) {
-      toast.error("Failed to delete withdrawal");
-    }
-  };
-
   const getTotalWithdrawals = () => {
     return withdrawals.reduce((sum, w) => sum + w.amount, 0);
   };
