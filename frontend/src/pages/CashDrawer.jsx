@@ -214,7 +214,9 @@ const CashDrawer = () => {
   };
 
   const getTotalWithdrawals = () => {
-    return getFilteredWithdrawals().reduce((sum, w) => sum + w.amount, 0);
+    return getFilteredWithdrawals()
+      .filter(t => t.transfer_type === 'cash_withdrawal' || t.transfer_type === 'gpay_withdrawal')
+      .reduce((sum, w) => sum + w.amount, 0);
   };
 
   return (
