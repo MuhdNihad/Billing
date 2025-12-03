@@ -595,27 +595,44 @@ const Expense = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {transfers.map((transfer) => (
-                      <TableRow key={transfer.id}>
-                        <TableCell>{new Date(transfer.date).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <span className="px-2 py-1 rounded text-xs bg-purple-100 text-purple-800">
-                            {transfer.transfer_type === 'cash_to_gpay' ? 'Cash → GPay' : 'GPay → Cash'}
-                          </span>
-                        </TableCell>
-                        <TableCell>{transfer.description || "-"}</TableCell>
-                        <TableCell className="font-semibold">₹{transfer.amount.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteTransfer(transfer.id)}
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {transfers.filter(t => !['cash_withdrawal', 'gpay_withdrawal'].includes(t.transfer_type)).map((transfer) => {
+                      let typeLabel = '';
+                      let typeColor = 'bg-purple-100 text-purple-800';
+                      
+                      if (transfer.transfer_type === 'cash_to_gpay') {
+                        typeLabel = 'Cash → GPay (Own)';
+                      } else if (transfer.transfer_type === 'gpay_to_cash') {
+                        typeLabel = 'GPay → Cash (Own)';
+                      } else if (transfer.transfer_type === 'customer_cash_to_gpay') {
+                        typeLabel = 'Customer Cash → GPay';
+                        typeColor = 'bg-green-100 text-green-800';
+                      } else if (transfer.transfer_type === 'customer_gpay_to_cash') {
+                        typeLabel = 'Customer GPay → Cash';
+                        typeColor = 'bg-blue-100 text-blue-800';
+                      }
+                      
+                      return (
+                        <TableRow key={transfer.id}>
+                          <TableCell>{new Date(transfer.date).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded text-xs ${typeColor}`}>
+                              {typeLabel}
+                            </span>
+                          </TableCell>
+                          <TableCell>{transfer.description || "-"}</TableCell>
+                          <TableCell className="font-semibold">₹{transfer.amount.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteTransfer(transfer.id)}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>
