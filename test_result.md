@@ -49,6 +49,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ All 4 NEW transfer types working correctly: customer_cash_to_gpay (cash+, gpay-), customer_gpay_to_cash (gpay+, cash-), cash_withdrawal (cash-), gpay_withdrawal (gpay-). Balance updates accurate for all types. GET /api/money-transfers returns all 6 transfer types. Transfer deletion and balance restoration working correctly for all types. Comprehensive testing with 76/76 tests passed (100% success rate)."
+      - working: true
+        agent: "testing"
+        comment: "✅ NEW DEPOSIT FEATURES TESTED: All 8 transfer types now working correctly including NEW cash_deposit and gpay_deposit. cash_deposit increases cash balance only, gpay_deposit increases GPay balance only. GET /api/money-transfers returns all 8 transfer types correctly. Deposit deletion and balance restoration working perfectly. Complete flow tested: get balance → create deposits → verify balance increases → delete deposits → verify balance restoration. Comprehensive testing with 120/120 tests passed (100% success rate)."
 
   - task: "Credit Sales"
     implemented: true
