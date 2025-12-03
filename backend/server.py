@@ -639,11 +639,25 @@ async def create_money_transfer(input: MoneyTransferCreate):
     doc['created_at'] = doc['created_at'].isoformat()
     await db.money_transfers.insert_one(doc)
     
-    # Update balances
+    # Update balances based on transfer type
     if input.transfer_type == "cash_to_gpay":
+        # Own money: Cash → GPay
         await update_balance(cash_change=-input.amount, gpay_change=input.amount)
-    else:  # gpay_to_cash
+    elif input.transfer_type == "gpay_to_cash":
+        # Own money: GPay → Cash
         await update_balance(cash_change=input.amount, gpay_change=-input.amount)
+    elif input.transfer_type == "customer_cash_to_gpay":
+        # Customer gives cash, wants GPay from us (we receive cash, we send GPay)
+        await update_balance(cash_change=input.amount, gpay_change=-input.amount)
+    elif input.transfer_type == "customer_gpay_to_cash":
+        # Customer wants cash, will GPay us (we receive GPay, we give cash)
+        await update_balance(cash_change=-input.amount, gpay_change=input.amount)
+    elif input.transfer_type == "cash_withdrawal":
+        # Withdraw cash from business
+        await update_balance(cash_change=-input.amount)
+    elif input.transfer_type == "gpay_withdrawal":
+        # Withdraw GPay from business
+        await update_balance(gpay_change=-input.amount)
     
     return transfer
 
