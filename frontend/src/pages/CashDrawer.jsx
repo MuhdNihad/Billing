@@ -163,16 +163,12 @@ const CashDrawer = () => {
     try {
       const promises = [];
 
-      // To add money, we reverse the withdrawal by using gpay_to_cash and cash_to_gpay
-      // But since we want to just add to balance, we can create a special transfer
-      // Or we can use the existing system by transferring from external source
-      
       if (cashAmount > 0) {
         promises.push(
           axios.post(`${API}/money-transfers`, {
-            transfer_type: "gpay_to_cash",
+            transfer_type: "cash_deposit",
             amount: cashAmount,
-            description: newDeposit.description || "Cash deposit to drawer",
+            description: newDeposit.description || "Cash deposit",
             date: newDeposit.date,
           })
         );
@@ -181,9 +177,9 @@ const CashDrawer = () => {
       if (gpayAmount > 0) {
         promises.push(
           axios.post(`${API}/money-transfers`, {
-            transfer_type: "cash_to_gpay",
+            transfer_type: "gpay_deposit",
             amount: gpayAmount,
-            description: newDeposit.description || "GPay deposit to drawer",
+            description: newDeposit.description || "GPay deposit",
             date: newDeposit.date,
           })
         );
