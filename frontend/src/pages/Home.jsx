@@ -1,6 +1,6 @@
 import Navigation from "../components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, ShoppingCart, Banknote, Wallet, FileText, TrendingUp } from "lucide-react";
+import { Package, ShoppingCart, Banknote, Wallet, FileText, TrendingUp, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -34,6 +34,13 @@ const Home = () => {
       icon: Wallet,
       path: "/expense",
       color: "bg-orange-500",
+    },
+    {
+      title: "Cash Drawer",
+      description: "Withdraw money from the business at end of day",
+      icon: DollarSign,
+      path: "/cash-drawer",
+      color: "bg-pink-500",
     },
     {
       title: "Reports & Analytics",
