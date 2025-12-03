@@ -1675,6 +1675,337 @@ class BillingAPITester:
         print("✓ Returns/Refunds working correctly - stock restored")
         return True
 
+    def test_balance_validation_fixes(self):
+        """Test Balance Validation Fixes - Prevent Negative Balances"""
+        print("\n" + "="*50)
+        print("TESTING BALANCE VALIDATION FIXES")
+        print("="*50)
+        
+        # Get current balance
+        success, current_balance = self.run_test(
+            "Get Current Balance for Validation Tests",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        current_cash = current_balance.get('cash', 0)
+        current_gpay = current_balance.get('gpay', 0)
+        print(f"Current Balance - Cash: ₹{current_cash:.2f}, GPay: ₹{current_gpay:.2f}")
+        
+        # Ensure we have expense category for testing
+        if not self.created_ids['expense_categories']:
+            success, response = self.run_test(
+                "Create Expense Category for Balance Validation",
+                "POST",
+                "expense-categories",
+                200,
+                data={"name": "Balance Test Category"}
+            )
+            if success and 'id' in response:
+                self.created_ids['expense_categories'].append(response['id'])
+            else:
+                return False
+        
+        exp_cat_id = self.created_ids['expense_categories'][0]
+        
+        # ===== TEST 1: INSUFFICIENT BALANCE FOR EXPENSES =====
+        print("\n--- Testing Insufficient Balance for Expenses ---")
+        
+        # Test 1a: Try to create expense with amount greater than available cash balance
+        insufficient_cash_amount = current_cash + 100.0
+        cash_expense_data = {
+            "category_id": exp_cat_id,
+            "amount": insufficient_cash_amount,
+            "description": "Test insufficient cash expense",
+            "payment_source": "cash"
+        }
+        
+        success, response = self.run_test(
+            "Create Expense with Insufficient Cash - Should Fail",
+            "POST",
+            "expenses",
+            400,  # Expecting 400 error
+            data=cash_expense_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient cash balance")
+            return False
+        print(f"✅ Correctly rejected expense with insufficient cash (₹{insufficient_cash_amount:.2f} > ₹{current_cash:.2f})")
+        
+        # Test 1b: Try to create expense with amount greater than available GPay balance
+        insufficient_gpay_amount = current_gpay + 50.0
+        gpay_expense_data = {
+            "category_id": exp_cat_id,
+            "amount": insufficient_gpay_amount,
+            "description": "Test insufficient gpay expense",
+            "payment_source": "gpay"
+        }
+        
+        success, response = self.run_test(
+            "Create Expense with Insufficient GPay - Should Fail",
+            "POST",
+            "expenses",
+            400,  # Expecting 400 error
+            data=gpay_expense_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient GPay balance")
+            return False
+        print(f"✅ Correctly rejected expense with insufficient GPay (₹{insufficient_gpay_amount:.2f} > ₹{current_gpay:.2f})")
+        
+        # ===== TEST 2: INSUFFICIENT BALANCE FOR WITHDRAWALS =====
+        print("\n--- Testing Insufficient Balance for Withdrawals ---")
+        
+        # Test 2a: Try to withdraw more cash than available
+        insufficient_cash_withdrawal = current_cash + 200.0
+        cash_withdrawal_data = {
+            "transfer_type": "cash_withdrawal",
+            "amount": insufficient_cash_withdrawal,
+            "description": "Test insufficient cash withdrawal"
+        }
+        
+        success, response = self.run_test(
+            "Create Cash Withdrawal with Insufficient Balance - Should Fail",
+            "POST",
+            "money-transfers",
+            400,  # Expecting 400 error
+            data=cash_withdrawal_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient cash withdrawal")
+            return False
+        print(f"✅ Correctly rejected cash withdrawal with insufficient balance (₹{insufficient_cash_withdrawal:.2f} > ₹{current_cash:.2f})")
+        
+        # Test 2b: Try to withdraw more GPay than available
+        insufficient_gpay_withdrawal = current_gpay + 150.0
+        gpay_withdrawal_data = {
+            "transfer_type": "gpay_withdrawal",
+            "amount": insufficient_gpay_withdrawal,
+            "description": "Test insufficient gpay withdrawal"
+        }
+        
+        success, response = self.run_test(
+            "Create GPay Withdrawal with Insufficient Balance - Should Fail",
+            "POST",
+            "money-transfers",
+            400,  # Expecting 400 error
+            data=gpay_withdrawal_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient GPay withdrawal")
+            return False
+        print(f"✅ Correctly rejected GPay withdrawal with insufficient balance (₹{insufficient_gpay_withdrawal:.2f} > ₹{current_gpay:.2f})")
+        
+        # ===== TEST 3: INSUFFICIENT BALANCE FOR TRANSFERS =====
+        print("\n--- Testing Insufficient Balance for Transfers ---")
+        
+        # Test 3a: Try cash_to_gpay with insufficient cash
+        insufficient_cash_transfer = current_cash + 75.0
+        cash_to_gpay_data = {
+            "transfer_type": "cash_to_gpay",
+            "amount": insufficient_cash_transfer,
+            "description": "Test insufficient cash to gpay transfer"
+        }
+        
+        success, response = self.run_test(
+            "Create Cash to GPay Transfer with Insufficient Cash - Should Fail",
+            "POST",
+            "money-transfers",
+            400,  # Expecting 400 error
+            data=cash_to_gpay_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient cash in cash_to_gpay")
+            return False
+        print(f"✅ Correctly rejected cash_to_gpay with insufficient cash (₹{insufficient_cash_transfer:.2f} > ₹{current_cash:.2f})")
+        
+        # Test 3b: Try gpay_to_cash with insufficient GPay
+        insufficient_gpay_transfer = current_gpay + 80.0
+        gpay_to_cash_data = {
+            "transfer_type": "gpay_to_cash",
+            "amount": insufficient_gpay_transfer,
+            "description": "Test insufficient gpay to cash transfer"
+        }
+        
+        success, response = self.run_test(
+            "Create GPay to Cash Transfer with Insufficient GPay - Should Fail",
+            "POST",
+            "money-transfers",
+            400,  # Expecting 400 error
+            data=gpay_to_cash_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient GPay in gpay_to_cash")
+            return False
+        print(f"✅ Correctly rejected gpay_to_cash with insufficient GPay (₹{insufficient_gpay_transfer:.2f} > ₹{current_gpay:.2f})")
+        
+        # Test 3c: Try customer_cash_to_gpay with insufficient GPay (we need GPay to send)
+        insufficient_customer_cash_to_gpay = current_gpay + 90.0
+        customer_cash_to_gpay_data = {
+            "transfer_type": "customer_cash_to_gpay",
+            "amount": insufficient_customer_cash_to_gpay,
+            "description": "Test insufficient customer cash to gpay"
+        }
+        
+        success, response = self.run_test(
+            "Create Customer Cash to GPay with Insufficient GPay - Should Fail",
+            "POST",
+            "money-transfers",
+            400,  # Expecting 400 error
+            data=customer_cash_to_gpay_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient GPay in customer_cash_to_gpay")
+            return False
+        print(f"✅ Correctly rejected customer_cash_to_gpay with insufficient GPay to send (₹{insufficient_customer_cash_to_gpay:.2f} > ₹{current_gpay:.2f})")
+        
+        # Test 3d: Try customer_gpay_to_cash with insufficient cash (we need cash to give)
+        insufficient_customer_gpay_to_cash = current_cash + 110.0
+        customer_gpay_to_cash_data = {
+            "transfer_type": "customer_gpay_to_cash",
+            "amount": insufficient_customer_gpay_to_cash,
+            "description": "Test insufficient customer gpay to cash"
+        }
+        
+        success, response = self.run_test(
+            "Create Customer GPay to Cash with Insufficient Cash - Should Fail",
+            "POST",
+            "money-transfers",
+            400,  # Expecting 400 error
+            data=customer_gpay_to_cash_data
+        )
+        if not success:
+            print("❌ Failed - Expected 400 error for insufficient cash in customer_gpay_to_cash")
+            return False
+        print(f"✅ Correctly rejected customer_gpay_to_cash with insufficient cash to give (₹{insufficient_customer_gpay_to_cash:.2f} > ₹{current_cash:.2f})")
+        
+        # ===== TEST 4: VALID OPERATIONS STILL WORK =====
+        print("\n--- Testing Valid Operations Still Work ---")
+        
+        # Test 4a: Create expense with sufficient balance - should succeed
+        if current_cash >= 50.0:
+            valid_cash_expense_data = {
+                "category_id": exp_cat_id,
+                "amount": 50.0,
+                "description": "Valid cash expense",
+                "payment_source": "cash"
+            }
+            
+            success, response = self.run_test(
+                "Create Valid Cash Expense - Should Succeed",
+                "POST",
+                "expenses",
+                200,
+                data=valid_cash_expense_data
+            )
+            if success and 'id' in response:
+                self.created_ids['expenses'].append(response['id'])
+                print("✅ Valid cash expense created successfully")
+            else:
+                print("❌ Failed - Valid cash expense should have succeeded")
+                return False
+        else:
+            print("⚠️ Skipping valid cash expense test - insufficient balance")
+        
+        if current_gpay >= 30.0:
+            valid_gpay_expense_data = {
+                "category_id": exp_cat_id,
+                "amount": 30.0,
+                "description": "Valid gpay expense",
+                "payment_source": "gpay"
+            }
+            
+            success, response = self.run_test(
+                "Create Valid GPay Expense - Should Succeed",
+                "POST",
+                "expenses",
+                200,
+                data=valid_gpay_expense_data
+            )
+            if success and 'id' in response:
+                self.created_ids['expenses'].append(response['id'])
+                print("✅ Valid GPay expense created successfully")
+            else:
+                print("❌ Failed - Valid GPay expense should have succeeded")
+                return False
+        else:
+            print("⚠️ Skipping valid GPay expense test - insufficient balance")
+        
+        # Test 4b: Create withdrawal with sufficient balance - should succeed
+        if current_cash >= 100.0:
+            valid_cash_withdrawal_data = {
+                "transfer_type": "cash_withdrawal",
+                "amount": 25.0,
+                "description": "Valid cash withdrawal"
+            }
+            
+            success, response = self.run_test(
+                "Create Valid Cash Withdrawal - Should Succeed",
+                "POST",
+                "money-transfers",
+                200,
+                data=valid_cash_withdrawal_data
+            )
+            if success:
+                print("✅ Valid cash withdrawal created successfully")
+            else:
+                print("❌ Failed - Valid cash withdrawal should have succeeded")
+                return False
+        else:
+            print("⚠️ Skipping valid cash withdrawal test - insufficient balance")
+        
+        if current_gpay >= 100.0:
+            valid_gpay_withdrawal_data = {
+                "transfer_type": "gpay_withdrawal",
+                "amount": 20.0,
+                "description": "Valid gpay withdrawal"
+            }
+            
+            success, response = self.run_test(
+                "Create Valid GPay Withdrawal - Should Succeed",
+                "POST",
+                "money-transfers",
+                200,
+                data=valid_gpay_withdrawal_data
+            )
+            if success:
+                print("✅ Valid GPay withdrawal created successfully")
+            else:
+                print("❌ Failed - Valid GPay withdrawal should have succeeded")
+                return False
+        else:
+            print("⚠️ Skipping valid GPay withdrawal test - insufficient balance")
+        
+        # Test 4c: Verify balances update correctly after valid operations
+        success, final_balance = self.run_test(
+            "Get Final Balance After Valid Operations",
+            "GET",
+            "balance",
+            200
+        )
+        if not success:
+            return False
+            
+        final_cash = final_balance.get('cash', 0)
+        final_gpay = final_balance.get('gpay', 0)
+        print(f"Final Balance - Cash: ₹{final_cash:.2f}, GPay: ₹{final_gpay:.2f}")
+        
+        # Verify balances are not negative
+        if final_cash < 0:
+            print(f"❌ Failed - Cash balance is negative: ₹{final_cash:.2f}")
+            return False
+        if final_gpay < 0:
+            print(f"❌ Failed - GPay balance is negative: ₹{final_gpay:.2f}")
+            return False
+        
+        print("✅ All balance validation tests passed!")
+        print("✅ Negative balances are now prevented!")
+        print("✅ Valid operations still work correctly!")
+        return True
+
     def cleanup(self):
         """Clean up created test data"""
         print("\n" + "="*50)
