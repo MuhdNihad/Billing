@@ -18,7 +18,7 @@ const Wholesale = () => {
   const [itemType, setItemType] = useState("product");
   const [selectedItem, setSelectedItem] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState(0);
   const [paymentType, setPaymentType] = useState("full");
@@ -28,7 +28,7 @@ const Wholesale = () => {
   const [gpayReturn, setGpayReturn] = useState(0);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [printType, setPrintType] = useState("a4");
+  const [printType, setPrintType] = useState("thermal");
   const [completedSale, setCompletedSale] = useState(null);
 
   useEffect(() => {
