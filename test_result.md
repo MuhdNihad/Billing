@@ -34,6 +34,21 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ POST /api/money-transfers with transfer_type='cash_to_gpay' and 'gpay_to_cash' work correctly. GET /api/money-transfers lists all transfers properly."
+      - working: true
+        agent: "testing"
+        comment: "✅ OLD transfer types (cash_to_gpay, gpay_to_cash) still working correctly. Balance updates and deletion/restoration working properly."
+
+  - task: "NEW Money Transfer Features - Cash Drawer and Customer Exchange"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ All 4 NEW transfer types working correctly: customer_cash_to_gpay (cash+, gpay-), customer_gpay_to_cash (gpay+, cash-), cash_withdrawal (cash-), gpay_withdrawal (gpay-). Balance updates accurate for all types. GET /api/money-transfers returns all 6 transfer types. Transfer deletion and balance restoration working correctly for all types. Comprehensive testing with 76/76 tests passed (100% success rate)."
 
   - task: "Credit Sales"
     implemented: true
