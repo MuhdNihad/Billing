@@ -140,14 +140,14 @@ class ExpenseCreate(BaseModel):
 class MoneyTransfer(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    transfer_type: Literal["cash_to_gpay", "gpay_to_cash"]
+    transfer_type: Literal["cash_to_gpay", "gpay_to_cash", "customer_cash_to_gpay", "customer_gpay_to_cash", "cash_withdrawal", "gpay_withdrawal"]
     amount: float
     description: Optional[str] = None
     date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class MoneyTransferCreate(BaseModel):
-    transfer_type: Literal["cash_to_gpay", "gpay_to_cash"]
+    transfer_type: Literal["cash_to_gpay", "gpay_to_cash", "customer_cash_to_gpay", "customer_gpay_to_cash", "cash_withdrawal", "gpay_withdrawal"]
     amount: float
     description: Optional[str] = None
     date: Optional[datetime] = None
