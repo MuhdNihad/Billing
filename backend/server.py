@@ -677,11 +677,23 @@ async def delete_money_transfer(transfer_id: str):
     if not transfer:
         raise HTTPException(status_code=404, detail="Transfer not found")
     
-    # Reverse the transfer
+    # Reverse the transfer based on type
     if transfer['transfer_type'] == "cash_to_gpay":
         await update_balance(cash_change=transfer['amount'], gpay_change=-transfer['amount'])
-    else:
+    elif transfer['transfer_type'] == "gpay_to_cash":
         await update_balance(cash_change=-transfer['amount'], gpay_change=transfer['amount'])
+    elif transfer['transfer_type'] == "customer_cash_to_gpay":
+        # Reverse: we gave GPay, we received cash
+        await update_balance(cash_change=-transfer['amount'], gpay_change=transfer['amount'])
+    elif transfer['transfer_type'] == "customer_gpay_to_cash":
+        # Reverse: we gave cash, we received GPay
+        await update_balance(cash_change=transfer['amount'], gpay_change=-transfer['amount'])
+    elif transfer['transfer_type'] == "cash_withdrawal":
+        # Restore cash
+        await update_balance(cash_change=transfer['amount'])
+    elif transfer['transfer_type'] == "gpay_withdrawal":
+        # Restore GPay
+        await update_balance(gpay_change=transfer['amount'])
     
     result = await db.money_transfers.delete_one({"id": transfer_id})
     return {"message": "Transfer deleted"}
