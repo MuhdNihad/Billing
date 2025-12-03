@@ -53,6 +53,18 @@ backend:
         agent: "testing"
         comment: "✅ NEW DEPOSIT FEATURES TESTED: All 8 transfer types now working correctly including NEW cash_deposit and gpay_deposit. cash_deposit increases cash balance only, gpay_deposit increases GPay balance only. GET /api/money-transfers returns all 8 transfer types correctly. Deposit deletion and balance restoration working perfectly. Complete flow tested: get balance → create deposits → verify balance increases → delete deposits → verify balance restoration. Comprehensive testing with 120/120 tests passed (100% success rate)."
 
+  - task: "Balance Validation Fixes"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ BALANCE VALIDATION FIXES TESTED SUCCESSFULLY: All insufficient balance scenarios correctly return 400 errors with clear messages. Tested: (1) Expenses with insufficient cash/GPay balance - properly rejected, (2) Withdrawals with insufficient cash/GPay balance - properly rejected, (3) All transfer types with insufficient balance - properly rejected (cash_to_gpay, gpay_to_cash, customer_cash_to_gpay, customer_gpay_to_cash), (4) Valid operations with sufficient balance still work correctly. Negative balances are now completely prevented. Balance validation working perfectly across all endpoints. Comprehensive testing with 102/102 tests passed (100% success rate)."
+
   - task: "Credit Sales"
     implemented: true
     working: true
