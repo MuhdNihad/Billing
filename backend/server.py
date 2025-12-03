@@ -636,6 +636,31 @@ async def delete_expense(expense_id: str):
 
 @api_router.post("/money-transfers", response_model=MoneyTransfer)
 async def create_money_transfer(input: MoneyTransferCreate):
+    # Check balance before transfer
+    balance = await get_or_create_balance()
+    
+    # Validate sufficient balance for operations that reduce balance
+    if input.transfer_type == "cash_to_gpay":
+        if balance['cash'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient cash balance. Available: ₹{balance['cash']:.2f}, Required: ₹{input.amount:.2f}")
+    elif input.transfer_type == "gpay_to_cash":
+        if balance['gpay'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient GPay balance. Available: ₹{balance['gpay']:.2f}, Required: ₹{input.amount:.2f}")
+    elif input.transfer_type == "customer_cash_to_gpay":
+        # Customer gives cash, we send GPay - need GPay balance
+        if balance['gpay'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient GPay balance to send to customer. Available: ₹{balance['gpay']:.2f}, Required: ₹{input.amount:.2f}")
+    elif input.transfer_type == "customer_gpay_to_cash":
+        # Customer sends GPay, we give cash - need cash balance
+        if balance['cash'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient cash balance to give to customer. Available: ₹{balance['cash']:.2f}, Required: ₹{input.amount:.2f}")
+    elif input.transfer_type == "cash_withdrawal":
+        if balance['cash'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient cash balance to withdraw. Available: ₹{balance['cash']:.2f}, Required: ₹{input.amount:.2f}")
+    elif input.transfer_type == "gpay_withdrawal":
+        if balance['gpay'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient GPay balance to withdraw. Available: ₹{balance['gpay']:.2f}, Required: ₹{input.amount:.2f}")
+    
     transfer_dict = input.model_dump()
     
     if transfer_dict['date'] is None:
