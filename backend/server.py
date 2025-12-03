@@ -700,6 +700,12 @@ async def delete_money_transfer(transfer_id: str):
     elif transfer['transfer_type'] == "gpay_withdrawal":
         # Restore GPay
         await update_balance(gpay_change=transfer['amount'])
+    elif transfer['transfer_type'] == "cash_deposit":
+        # Reverse deposit (remove cash)
+        await update_balance(cash_change=-transfer['amount'])
+    elif transfer['transfer_type'] == "gpay_deposit":
+        # Reverse deposit (remove GPay)
+        await update_balance(gpay_change=-transfer['amount'])
     
     result = await db.money_transfers.delete_one({"id": transfer_id})
     return {"message": "Transfer deleted"}
