@@ -426,10 +426,33 @@ const CashDrawer = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Withdrawal History</CardTitle>
-            <CardDescription>All cash drawer withdrawals</CardDescription>
+            <CardTitle>Transaction History</CardTitle>
+            <CardDescription>All cash drawer withdrawals and deposits</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-4">
+              <Label className="flex items-center mb-2">
+                <Calendar className="w-4 h-4 mr-2" />
+                Filter by Date
+              </Label>
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                placeholder="Select date"
+                className="max-w-xs"
+              />
+              {selectedDate && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedDate("")}
+                  className="ml-2"
+                >
+                  Clear Filter
+                </Button>
+              )}
+            </div>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -440,10 +463,10 @@ const CashDrawer = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {withdrawals.length === 0 ? (
+                {getFilteredWithdrawals().length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center text-gray-500">
-                      No withdrawals yet
+                      No transactions yet
                     </TableCell>
                   </TableRow>
                 ) : (
