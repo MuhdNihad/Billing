@@ -1717,6 +1717,7 @@ def main():
         tester.test_expense_with_payment_source,
         tester.test_money_transfers,
         tester.test_new_money_transfer_features,  # NEW: Test the new money transfer features
+        tester.test_new_deposit_features,  # NEW: Test the deposit features (cash_deposit, gpay_deposit)
         tester.test_old_money_transfer_types,  # Verify OLD transfer types still work
         tester.test_credit_sales,
         tester.test_category_editing,
