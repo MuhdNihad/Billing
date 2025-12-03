@@ -470,22 +470,43 @@ const CashDrawer = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  withdrawals.map((withdrawal) => (
-                    <TableRow key={withdrawal.id}>
-                      <TableCell>{new Date(withdrawal.date).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          withdrawal.transfer_type === 'cash_withdrawal' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {withdrawal.transfer_type === 'cash_withdrawal' ? 'Cash' : 'GPay'}
-                        </span>
-                      </TableCell>
-                      <TableCell>{withdrawal.description || "-"}</TableCell>
-                      <TableCell className="font-semibold text-red-600">-₹{withdrawal.amount.toFixed(2)}</TableCell>
-                    </TableRow>
-                  ))
+                  getFilteredWithdrawals().map((transaction) => {
+                    const isWithdrawal = transaction.transfer_type === 'cash_withdrawal' || transaction.transfer_type === 'gpay_withdrawal';
+                    const isDeposit = transaction.transfer_type === 'cash_deposit' || transaction.transfer_type === 'gpay_deposit';
+                    const isCash = transaction.transfer_type === 'cash_withdrawal' || transaction.transfer_type === 'cash_deposit';
+                    
+                    let typeLabel = '';
+                    let typeColor = '';
+                    
+                    if (transaction.transfer_type === 'cash_withdrawal') {
+                      typeLabel = 'Cash Withdrawal';
+                      typeColor = 'bg-red-100 text-red-800';
+                    } else if (transaction.transfer_type === 'gpay_withdrawal') {
+                      typeLabel = 'GPay Withdrawal';
+                      typeColor = 'bg-red-100 text-red-800';
+                    } else if (transaction.transfer_type === 'cash_deposit') {
+                      typeLabel = 'Cash Deposit';
+                      typeColor = 'bg-green-100 text-green-800';
+                    } else if (transaction.transfer_type === 'gpay_deposit') {
+                      typeLabel = 'GPay Deposit';
+                      typeColor = 'bg-green-100 text-green-800';
+                    }
+                    
+                    return (
+                      <TableRow key={transaction.id}>
+                        <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded text-xs ${typeColor}`}>
+                            {typeLabel}
+                          </span>
+                        </TableCell>
+                        <TableCell>{transaction.description || "-"}</TableCell>
+                        <TableCell className={`font-semibold ${isWithdrawal ? 'text-red-600' : 'text-green-600'}`}>
+                          {isWithdrawal ? '-' : '+'}₹{transaction.amount.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
