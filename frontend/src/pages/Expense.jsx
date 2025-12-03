@@ -384,7 +384,6 @@ const Expense = () => {
                       <TableHead>Description</TableHead>
                       <TableHead>Payment</TableHead>
                       <TableHead>Amount</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -401,16 +400,6 @@ const Expense = () => {
                           </span>
                         </TableCell>
                         <TableCell className="text-red-600 font-semibold">₹{exp.amount.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            data-testid={`delete-expense-${exp.id}`}
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteExpense(exp.id)}
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
