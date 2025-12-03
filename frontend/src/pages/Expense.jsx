@@ -527,13 +527,26 @@ const Expense = () => {
                             value={newTransfer.transfer_type} 
                             onValueChange={(value) => setNewTransfer({ ...newTransfer, transfer_type: value })}
                           >
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="cash_to_gpay" id="cash-to-gpay" />
-                              <Label htmlFor="cash-to-gpay">Cash → GPay</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="gpay_to_cash" id="gpay-to-cash" />
-                              <Label htmlFor="gpay-to-cash">GPay → Cash</Label>
+                            <div className="space-y-3">
+                              <div className="font-semibold text-sm text-gray-700">Own Money Transfers:</div>
+                              <div className="flex items-center space-x-2 ml-4">
+                                <RadioGroupItem value="cash_to_gpay" id="cash-to-gpay" />
+                                <Label htmlFor="cash-to-gpay">Cash → GPay (My money)</Label>
+                              </div>
+                              <div className="flex items-center space-x-2 ml-4">
+                                <RadioGroupItem value="gpay_to_cash" id="gpay-to-cash" />
+                                <Label htmlFor="gpay-to-cash">GPay → Cash (My money)</Label>
+                              </div>
+                              
+                              <div className="font-semibold text-sm text-gray-700 mt-4">Customer Exchanges:</div>
+                              <div className="flex items-center space-x-2 ml-4">
+                                <RadioGroupItem value="customer_cash_to_gpay" id="customer-cash-to-gpay" />
+                                <Label htmlFor="customer-cash-to-gpay">Customer gives Cash, wants GPay</Label>
+                              </div>
+                              <div className="flex items-center space-x-2 ml-4">
+                                <RadioGroupItem value="customer_gpay_to_cash" id="customer-gpay-to-cash" />
+                                <Label htmlFor="customer-gpay-to-cash">Customer wants Cash, will GPay</Label>
+                              </div>
                             </div>
                           </RadioGroup>
                         </div>
