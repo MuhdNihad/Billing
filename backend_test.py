@@ -1299,6 +1299,7 @@ def main():
         tester.test_balance_system,
         tester.test_expense_with_payment_source,
         tester.test_money_transfers,
+        tester.test_new_money_transfer_features,  # NEW: Test the new money transfer features
         tester.test_credit_sales,
         tester.test_category_editing,
         tester.test_inventory_total_value,
