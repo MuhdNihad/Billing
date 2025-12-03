@@ -39,11 +39,14 @@ const CashDrawer = () => {
         axios.get(`${API}/money-transfers`),
       ]);
       setBalance(balRes.data);
-      // Filter for withdrawal transactions only
-      const withdrawalTransfers = transRes.data.filter(
-        (t) => t.transfer_type === "cash_withdrawal" || t.transfer_type === "gpay_withdrawal"
+      // Filter for withdrawal and deposit transactions
+      const drawerTransfers = transRes.data.filter(
+        (t) => t.transfer_type === "cash_withdrawal" || 
+              t.transfer_type === "gpay_withdrawal" ||
+              t.transfer_type === "cash_deposit" ||
+              t.transfer_type === "gpay_deposit"
       );
-      setWithdrawals(withdrawalTransfers);
+      setWithdrawals(drawerTransfers);
     } catch (error) {
       toast.error("Failed to load data");
     }
