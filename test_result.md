@@ -151,3 +151,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Comprehensive backend testing completed successfully. All 48 tests passed (100% success rate). All critical features from review request are working correctly: Cash/GPay Balance System, Expense with Payment Source, Money Transfers, Credit Sales, Category Editing, Inventory Total Value, and Returns/Refunds. Backend API is fully functional and ready for production use."
+  - agent: "testing"
+    message: "NEW Money Transfer Features Testing Completed Successfully! All 76 tests passed (100% success rate). Tested all 4 NEW transfer types: customer_cash_to_gpay, customer_gpay_to_cash, cash_withdrawal, gpay_withdrawal. Balance updates working correctly for each type. Verified OLD transfer types (cash_to_gpay, gpay_to_cash) still work. GET /api/money-transfers returns all 6 transfer types. Transfer deletion and balance restoration working correctly for all types. Cash Drawer and Customer Exchange features are fully functional."
