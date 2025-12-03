@@ -550,6 +550,15 @@ async def create_expense(input: ExpenseCreate):
     if not category:
         raise HTTPException(status_code=404, detail="Expense category not found")
     
+    # Check if there's sufficient balance
+    balance = await get_or_create_balance()
+    if input.payment_source == "cash":
+        if balance['cash'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient cash balance. Available: ₹{balance['cash']:.2f}, Required: ₹{input.amount:.2f}")
+    else:  # gpay
+        if balance['gpay'] < input.amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient GPay balance. Available: ₹{balance['gpay']:.2f}, Required: ₹{input.amount:.2f}")
+    
     expense_dict = input.model_dump()
     expense_dict['category_name'] = category['name']
     
