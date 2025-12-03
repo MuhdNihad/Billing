@@ -263,7 +263,7 @@ const CashDrawer = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
             <CardHeader>
               <CardTitle className="flex items-center text-red-700">
@@ -348,6 +348,74 @@ const CashDrawer = () => {
                     </div>
                     <Button onClick={handleCustomWithdraw} className="w-full">
                       Withdraw ₹{((parseFloat(newWithdrawal.cash_amount) || 0) + (parseFloat(newWithdrawal.gpay_amount) || 0)).toFixed(2)}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <CardHeader>
+              <CardTitle className="flex items-center text-green-700">
+                <Plus className="w-5 h-5 mr-2" />
+                Add Money
+              </CardTitle>
+              <CardDescription className="text-green-600">
+                Deposit cash or GPay to the business
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Dialog open={addMoneyDialog} onOpenChange={setAddMoneyDialog}>
+                <DialogTrigger asChild>
+                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                    <Plus className="w-4 h-4 mr-2" /> Add Money
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Money</DialogTitle>
+                    <DialogDescription>Deposit money to the business</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Cash Amount (₹)</Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={newDeposit.cash_amount}
+                        onChange={(e) => setNewDeposit({ ...newDeposit, cash_amount: parseFloat(e.target.value) || 0 })}
+                        placeholder="Enter cash amount"
+                      />
+                    </div>
+                    <div>
+                      <Label>GPay Amount (₹)</Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={newDeposit.gpay_amount}
+                        onChange={(e) => setNewDeposit({ ...newDeposit, gpay_amount: parseFloat(e.target.value) || 0 })}
+                        placeholder="Enter GPay amount"
+                      />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <Input
+                        value={newDeposit.description}
+                        onChange={(e) => setNewDeposit({ ...newDeposit, description: e.target.value })}
+                        placeholder="Optional description"
+                      />
+                    </div>
+                    <div>
+                      <Label>Date</Label>
+                      <Input
+                        type="date"
+                        value={newDeposit.date}
+                        onChange={(e) => setNewDeposit({ ...newDeposit, date: e.target.value })}
+                      />
+                    </div>
+                    <Button onClick={handleAddMoney} className="w-full bg-green-600 hover:bg-green-700">
+                      Add ₹{((parseFloat(newDeposit.cash_amount) || 0) + (parseFloat(newDeposit.gpay_amount) || 0)).toFixed(2)}
                     </Button>
                   </div>
                 </DialogContent>
