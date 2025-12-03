@@ -580,11 +580,10 @@ const Expense = () => {
                       <TableHead>Type</TableHead>
                       <TableHead>Description</TableHead>
                       <TableHead>Amount</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {transfers.filter(t => !['cash_withdrawal', 'gpay_withdrawal'].includes(t.transfer_type)).map((transfer) => {
+                    {transfers.filter(t => !['cash_withdrawal', 'gpay_withdrawal', 'cash_deposit', 'gpay_deposit'].includes(t.transfer_type)).map((transfer) => {
                       let typeLabel = '';
                       let typeColor = 'bg-purple-100 text-purple-800';
                       
@@ -610,15 +609,6 @@ const Expense = () => {
                           </TableCell>
                           <TableCell>{transfer.description || "-"}</TableCell>
                           <TableCell className="font-semibold">₹{transfer.amount.toFixed(2)}</TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteTransfer(transfer.id)}
-                            >
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
-                          </TableCell>
                         </TableRow>
                       );
                     })}
