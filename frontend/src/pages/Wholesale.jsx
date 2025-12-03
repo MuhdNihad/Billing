@@ -138,7 +138,7 @@ const Wholesale = () => {
     }
 
     setSelectedItem("");
-    setQuantity(1);
+    setQuantity(0);
     toast.success("Added to cart");
   };
 
