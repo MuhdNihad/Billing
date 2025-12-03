@@ -6,14 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Wallet, DollarSign } from "lucide-react";
+import { Plus, Wallet, DollarSign, Calendar } from "lucide-react";
 import { API, axios, toast } from "../App";
 
 const CashDrawer = () => {
   const [balance, setBalance] = useState({ cash: 0, gpay: 0 });
   const [withdrawals, setWithdrawals] = useState([]);
   const [withdrawDialog, setWithdrawDialog] = useState(false);
+  const [addMoneyDialog, setAddMoneyDialog] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
   const [newWithdrawal, setNewWithdrawal] = useState({
+    cash_amount: 0,
+    gpay_amount: 0,
+    description: "",
+    date: new Date().toISOString().split("T")[0],
+  });
+  const [newDeposit, setNewDeposit] = useState({
     cash_amount: 0,
     gpay_amount: 0,
     description: "",
